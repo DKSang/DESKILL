@@ -12,7 +12,7 @@
 
 ---
 
-## 📋 Business Problem
+## Business Problem
 
 [2-3 sentences: the context, the pain, the solution. Copy from docs/business_problem.md]
 
@@ -25,7 +25,7 @@
 
 ---
 
-## 🏗️ Architecture
+## Architecture
 
 [Copy Mermaid diagram from docs/architecture.md]
 
@@ -53,7 +53,7 @@ graph LR
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 **Prerequisites**: Docker Desktop, Python 3.11+, Git
 
@@ -89,7 +89,7 @@ streamlit run serving/app.py
 
 ---
 
-## 📊 Dashboard
+## Dashboard
 
 ![Dashboard screenshot](docs/demo/dashboard.png)
 
@@ -97,7 +97,7 @@ streamlit run serving/app.py
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 [REPO]/
@@ -135,7 +135,7 @@ streamlit run serving/app.py
 
 ---
 
-## 🔍 Data Lineage
+## Data Lineage
 
 | Source | Bronze | Silver | Gold | Serving |
 |--------|--------|--------|------|---------|
@@ -146,7 +146,7 @@ streamlit run serving/app.py
 
 ---
 
-## 💰 Cost Analysis
+## Cost Analysis
 
 Running locally (cost: **$0**).
 
@@ -163,7 +163,7 @@ At 10× scale (~[X×10] MB/day): ~$[Y×10]/month — would optimize by [switchin
 
 ---
 
-## 🔐 Security Notes
+## Security Notes
 
 - All credentials via `.env` (gitignored) — production would use AWS Secrets Manager or HashiCorp Vault
 - No PII in Gold layer — [describe any PII handling if applicable]
@@ -189,7 +189,7 @@ python quality/contract_check.py
 
 ---
 
-## 🗺️ Roadmap / Known Limitations
+## Roadmap / Known Limitations
 
 - [ ] [Limitation 1 — e.g. "Rate limit forces daily batch; real-time would require paid tier"]
 - [ ] [Limitation 2 — e.g. "No SCD Type 2 for company dim — historical sector changes not tracked"]

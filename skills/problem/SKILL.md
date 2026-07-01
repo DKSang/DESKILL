@@ -47,9 +47,9 @@ This is the most important part. Each question must:
 - "Which news topics have the highest correlation with same-day price movements?"
 
 **Bad examples (too vague):**
-- "Understand market trends" ❌
-- "Analyze stock performance" ❌
+- "Understand market trends" (too vague)
 
+- "Analyze stock performance" (too vague)
 If the user gives vague questions, stress-test them: *"If I were to write SQL for this question right now, what would the entity, metric, threshold, and timeframe be?"*
 
 ### Step 4 — Define Success Metric

@@ -106,12 +106,12 @@ DESKILL/
 
 | | DESKILL | wshobson/agents | vaquarkhan/agent-skills |
 |---|---|---|---|
-| Methodology | 10-phase roadmap + 14 sequential skills | ❌ | ❌ (isolated skills only) |
-| Code patterns | Airflow, dbt, Spark, GE | Airflow, dbt, Spark, GE | ❌ |
-| AI agent personas | data-engineer + backend-architect | data-engineer + backend-architect | ❌ |
-| Skill graph | 14 skills, each suggests the next | ❌ | ❌ |
-| Anti-patterns | ~30 common mistakes cataloged | ❌ | ✅ (across 73 skills) |
-| Templates | 14 skill assets | ❌ | 8 YAML |
+| Methodology | 10-phase roadmap + 14 sequential skills | — | — (isolated skills only) |
+| Code patterns | Airflow, dbt, Spark, GE | Airflow, dbt, Spark, GE | — |
+| AI agent personas | data-engineer + backend-architect | data-engineer + backend-architect | — |
+| Skill graph | 14 skills, each suggests the next | — | — |
+| Anti-patterns | ~30 common mistakes cataloged | — | Yes (across 73 skills) |
+| Templates | 14 skill assets | — | 8 YAML |
 | Packaging | npm + CLI + CI/CD + plugin | Plugin-only | Full IDE integration |
 
 ---

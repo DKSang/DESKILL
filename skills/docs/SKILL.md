@@ -64,7 +64,7 @@ Estimate for the current stack:
 
 [![CI](https://github.com/<user>/<repo>/actions/workflows/ci.yml/badge.svg)](link)
 
-## 📋 Business Problem
+## Business Problem
 
 <Copy from docs/business_problem.md — Context + Problem + Solution (2-3 paragraphs)>
 
@@ -73,7 +73,7 @@ Estimate for the current stack:
 2. <Question 2>
 3. <Question 3>
 
-## 🏗️ Architecture
+## Architecture
 
 <Mermaid diagram from docs/architecture.md>
 
@@ -88,7 +88,7 @@ graph LR
 
 **Stack**: <list tools> | **Scale**: <X MB/day, single machine>
 
-## 🚀 Quick Start
+## Quick Start
 
 **Prerequisites**: Docker, Python 3.11+, Git
 
@@ -113,7 +113,7 @@ docker compose exec airflow-scheduler \
 streamlit run serving/app.py
 ```
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 <repo>/
@@ -128,13 +128,13 @@ streamlit run serving/app.py
 └── docker-compose.yml
 ```
 
-## 📊 Demo
+## Demo
 
 <Embed screenshot or GIF of dashboard>
 
 ![Dashboard screenshot](docs/demo/dashboard.png)
 
-## 🔍 Data Lineage
+## Data Lineage
 
 | Source | Bronze | Silver | Gold | Serving |
 |--------|--------|--------|------|---------|
@@ -143,7 +143,7 @@ streamlit run serving/app.py
 
 <dbt docs screenshot or link if available>
 
-## 💰 Cost Analysis
+## Cost Analysis
 
 Running locally (free). Estimated cloud cost at current scale (~<X> MB/day):
 
@@ -156,13 +156,13 @@ Running locally (free). Estimated cloud cost at current scale (~<X> MB/day):
 
 At 10x scale (~<X*10> MB/day): **~$<Y*10>/month** — would consider <optimization strategy>.
 
-## 🔐 Security Notes
+## Security Notes
 
 - Credentials via `.env` (gitignored) — production would use Secrets Manager / Vault
 - No PII in Gold layer
 - Data retained for <X> days per source SLA
 
-## 🤝 Contributing
+## Contributing
 
 <Optional — skip for solo portfolio projects>
 ```
@@ -181,6 +181,6 @@ At 10x scale (~<X*10> MB/day): **~$<Y*10>/month** — would consider <optimizati
 
 ## Next Step
 
-🎉 **Project complete!** Your data engineering pipeline is fully built, tested, documented, and ready for portfolio review or production use.
+**Project complete!** Your data engineering pipeline is fully built, tested, documented, and ready for portfolio review or production use.
 ```
 

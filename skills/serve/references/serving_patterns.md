@@ -22,9 +22,9 @@
 
 ### One chart = one question
 Each chart must answer exactly one analytical question. Label the chart title AS the question:
-- ❌ "Stock Performance" (tells you nothing)
-- ✅ "Which stocks moved > 5% today vs 7-day average?" (answers the question)
+- BAD: "Stock Performance" (tells you nothing)
 
+- GOOD: "Which stocks moved > 5% today vs 7-day average?" (answers the question)
 ### Information hierarchy
 ```
 Page title: [project name] Analytics Dashboard

@@ -84,7 +84,7 @@ from datetime import datetime, timedelta
 # ─── Setup ───────────────────────────────────────────────────────────────────
 st.set_page_config(
     page_title="<Project> Analytics",
-    page_icon="📊",
+    page_icon="chart",
     layout="wide",
     initial_sidebar_state="expanded",
 )
@@ -112,7 +112,7 @@ latest = query("SELECT MAX(_loaded_at) as latest FROM fct_candles").iloc[0]["lat
 st.sidebar.caption(f"Data updated: {latest}")
 
 # ─── Page: Question 1 ─────────────────────────────────────────────────────────
-st.title("📊 <Project> Analytics Dashboard")
+st.title("<Project> Analytics Dashboard")
 
 # Analytical Question 1
 st.header("Question 1: <Question title>")

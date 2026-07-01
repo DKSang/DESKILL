@@ -57,28 +57,28 @@ Each skill produces one deliverable and then suggests the next skill to run. Fol
 
 ```
 STAGE 1 — DISCOVER
-  ✅/⬜ docs/business_problem.md  →  /problem
-  ✅/⬜ contracts/source-*.yaml   →  /sources
+  [ ] docs/business_problem.md  →  /problem
+  [ ] contracts/source-*.yaml   →  /sources
 
-STAGE 2 — DESIGN
-  ✅/⬜ docs/architecture.md      →  /arch
-  ✅/⬜ docs/dw_schema.md         →  /schema
-  ✅/⬜ docker-compose.yml        →  /env
+DESIGN
+  [ ] docs/architecture.md      →  /arch
+  [ ] docs/dw_schema.md         →  /schema
+  [ ] docker-compose.yml        →  /env
 
-STAGE 3 — BUILD
-  ✅/⬜ ingestion/<source>/       →  /ingest
-  ✅/⬜ Silver + Gold models      →  /transform
-  ✅/⬜ tests/ all passing        →  /test
+BUILD
+  [ ] ingestion/<source>/       →  /ingest
+  [ ] Silver + Gold models      →  /transform
+  [ ] tests/ all passing        →  /test
 
-STAGE 4 — QUALITY
-  ✅/⬜ quality/dq_checks.py      →  /dq
-  ✅/⬜ contract_check_report.json→  /contract-check
+QUALITY
+  [ ] quality/dq_checks.py      →  /dq
+  [ ] contract_check_report.json→  /contract-check
 
-STAGE 5 — SHIP
-  ✅/⬜ dags/<project>_pipeline.py→  /dag
-  ✅/⬜ serving/app.py            →  /serve
-  ✅/⬜ .github/workflows/ci.yml  →  /ci
-  ✅/⬜ README.md + cost_analysis →  /docs
+SHIP
+  [ ] dags/<project>_pipeline.py→  /dag
+  [ ] serving/app.py            →  /serve
+  [ ] .github/workflows/ci.yml  →  /ci
+  [ ] README.md + cost_analysis →  /docs
 ```
 
 ---

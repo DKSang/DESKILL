@@ -80,7 +80,7 @@ class DQResult:
         self.timestamp = datetime.now(timezone.utc).isoformat()
 
     def __repr__(self):
-        status = "✅ PASS" if self.passed else f"❌ FAIL [{self.severity.upper()}]"
+        status = "PASS" if self.passed else f"FAIL [{self.severity.upper()}]"
         return f"{status} | {self.table}.{self.check_name} | observed={self.observed} | expected={self.expected}"
 
 
