@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-  <em>Data Engineering Project Roadmap — từ business problem đến production pipeline</em>
+  <em>Data Engineering Project Roadmap — from business problem to production pipeline</em>
 </p>
 
 <p align="center">
@@ -14,23 +14,24 @@
 
 ---
 
-## Tại sao DESKILL?
+## Why DESKILL?
 
-Xây dựng data pipeline thường rơi vào 2 cái bẫy:
-- **Bẫy 1:** Nhảy thẳng vào chọn tool, quên mất business problem cần giải
-- **Bẫy 2:** Có methodology nhưng không biết implement code thế nào
+Building a data pipeline usually falls into two traps:
 
-DESKILL giải quyết cả hai: **process methodology** (dạy tư duy, thứ tự, feedback loops) kết hợp với **code patterns production** (Airflow, dbt, Spark, Great Expectations) trong một framework thống nhất.
+- **Trap 1:** Jumping straight into tool selection, forgetting the business problem
+- **Trap 2:** Having methodology but no idea how to implement it in code
+
+DESKILL solves both: **process methodology** (thinking framework, ordering, feedback loops) combined with **production code patterns** (Airflow, dbt, Spark, Great Expectations) in a unified framework.
 
 ---
 
-## Cài đặt
+## Installation
 
 ```bash
-# Cách 1: npm (recommended)
+# Option 1: npm (recommended)
 npx deskill-de install
 
-# Cách 2: Clone repo
+# Option 2: Clone repo
 git clone https://github.com/anomalyco/DESKILL.git
 ```
 
@@ -38,7 +39,7 @@ git clone https://github.com/anomalyco/DESKILL.git
 
 ## Quick Start — 14 Sequential Skills
 
-Chạy theo thứ tự, mỗi skill gợi ý skill tiếp theo:
+Each skill produces one deliverable and suggests the next skill to run:
 
 ```
   /problem → /sources → /arch → /schema → /env → /ingest → /transform
@@ -64,56 +65,56 @@ Chạy theo thứ tự, mỗi skill gợi ý skill tiếp theo:
 
 ---
 
-## Cấu trúc repo
+## Repository Structure
 
 ```
 DESKILL/
 ├── SKILL.md                        # Entry point — principles, skill flow, phase map
 ├── plugin.json                     # Plugin manifest
 ├── package.json                    # npm package + CLI installer
-├── commands/                       # Orchestrator commands: data-pipeline, data-driven-feature
-├── skills/                         # 14 atomic skills (1 deliverable each)
+├── commands/                       # Orchestrator commands
+├── skills/                         # 14 atomic skills (one deliverable each)
 │   ├── problem/                    #   Business problem definition
-│   ├── sources/                    #   Source evaluation + data contracts
+│   ├── sources/                    #   Source evaluation & data contracts
 │   ├── arch/                       #   Pipeline architecture design
-│   ├── schema/                     #   DW schema (Fact/Dim tables)
+│   ├── schema/                     #   DW schema (Fact & Dimension tables)
 │   ├── env/                        #   Development environment setup
 │   ├── ingest/                     #   Bronze ingestion layer
-│   ├── transform/                  #   Silver + Gold transformations
-│   ├── test/                       #   Test suite (schema + logic)
+│   ├── transform/                  #   Silver & Gold transformations
+│   ├── test/                       #   Test suite (schema & logic)
 │   ├── dq/                         #   Runtime data quality checks
 │   ├── contract-check/             #   Data vs contract validation
 │   ├── dag/                        #   Orchestration DAG
-│   ├── serve/                      #   Serving layer (dashboard/API)
+│   ├── serve/                      #   Serving layer (dashboard / API)
 │   ├── ci/                         #   CI/CD (GitHub Actions)
 │   └── docs/                       #   Documentation
 ├── phases/                         # Deep-dive methodology (10 phases)
 ├── implementation/                 # Code patterns: Airflow, dbt, Spark, GE
-└── agents/                         # AI agent personas: data-engineer, backend-architect
+└── agents/                         # AI agent personas
 ```
 
 ---
 
-## Tính năng chính
+## Key Features
 
-- **Domain-agnostic:** Weather, e-commerce, finance, IoT, logistics — dùng được hết
-- **Tool-agnostic:** Không mandate stack, chỉ dẫn chọn tool theo scale và mục tiêu
-- **Iterative:** Phases có feedback loops — phát hiện ở phase sau có thể quay lại sửa phase trước
-- **AI-native:** Designed để dùng với AI pair-engineer ở mọi phase
-- **Production patterns:** Code examples từ Airflow, dbt, Spark, Great Expectations
-- **Parallel by design:** Mỗi skill độc lập, chạy tuần tự với gợi ý skill tiếp theo
+- **Domain-agnostic** — Weather, e-commerce, finance, IoT, logistics: works everywhere
+- **Tool-agnostic** — No mandated stack; guidance for choosing tools by scale and goals
+- **Iterative** — Feedback loops between phases; later discoveries can revise earlier decisions
+- **AI-native** — Designed to be used with an AI pair-engineer at every phase
+- **Production patterns** — Real code examples from Airflow, dbt, Spark, Great Expectations
+- **Sequential by design** — Each skill suggests the next, guiding you end-to-end
 
 ---
 
-## So sánh với các framework khác
+## Comparison with Other Frameworks
 
 | | DESKILL | wshobson/agents | vaquarkhan/agent-skills |
-|---|---|---|---|---|
-| Methodology | 10-phase roadmap + 14 sequential skills | ❌ | ❌ (chỉ skill rời rạc) |
+|---|---|---|---|
+| Methodology | 10-phase roadmap + 14 sequential skills | ❌ | ❌ (isolated skills only) |
 | Code patterns | Airflow, dbt, Spark, GE | Airflow, dbt, Spark, GE | ❌ |
 | AI agent personas | data-engineer + backend-architect | data-engineer + backend-architect | ❌ |
-| Skill graph | 14 skills, mỗi skill gợi ý skill tiếp theo | ❌ | ❌ |
-| Anti-patterns | ~30 common mistakes cataloged | ❌ | ✅ (trong 73 skills) |
+| Skill graph | 14 skills, each suggests the next | ❌ | ❌ |
+| Anti-patterns | ~30 common mistakes cataloged | ❌ | ✅ (across 73 skills) |
 | Templates | 14 skill assets | ❌ | 8 YAML |
 | Packaging | npm + CLI + CI/CD + plugin | Plugin-only | Full IDE integration |
 
