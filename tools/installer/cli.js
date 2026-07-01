@@ -229,6 +229,21 @@ function writeOpenCodeConfig(targetDir, config) {
   const srcSkill = path.join(ROOT, 'SKILL.md');
   const destSkill = path.join(deskillSkillDir, 'SKILL.md');
   if (fs.existsSync(srcSkill)) fs.copyFileSync(srcSkill, destSkill);
+
+  const opencodeCommandsDir = path.join(opencodeDir, 'commands');
+  fs.mkdirSync(opencodeCommandsDir, { recursive: true });
+
+  const deskillCommandsDir = path.join(ROOT, 'commands');
+  if (fs.existsSync(deskillCommandsDir)) {
+    const entries = fs.readdirSync(deskillCommandsDir);
+    for (const entry of entries) {
+      if (entry.endsWith('.md')) {
+        const src = path.join(deskillCommandsDir, entry);
+        const dest = path.join(opencodeCommandsDir, entry);
+        if (!fs.existsSync(dest)) fs.copyFileSync(src, dest);
+      }
+    }
+  }
 }
 
 // ─── Install logic ───────────────────────────────────────────────
