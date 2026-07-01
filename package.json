@@ -1,6 +1,6 @@
 {
   "name": "deskill-de",
-  "version": "2.1.2",
+  "version": "2.2.0",
   "description": "Data Engineering Project Roadmap — end-to-end framework: lifecycle commands, implementation patterns, AI agent personas, and YAML templates for building production data pipelines",
   "keywords": [
     "data-engineering",
