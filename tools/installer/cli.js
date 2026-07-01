@@ -219,15 +219,7 @@ function writeOpenCodeConfig(targetDir, config) {
   const opencodeDir = path.join(targetDir, '.opencode');
   fs.mkdirSync(opencodeDir, { recursive: true });
 
-  const content = [
-    '{',
-    '  "skills": {',
-    '    "paths": [',
-    '      "./.deskill"',
-    '    ]',
-    '  }',
-    '}',
-  ].join('\n') + '\n';
+  const content = '{}\n';
 
   fs.writeFileSync(path.join(opencodeDir, 'opencode.json'), content);
 }
