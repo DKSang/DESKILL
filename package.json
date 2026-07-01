@@ -1,6 +1,6 @@
 {
   "name": "deskill-de",
-  "version": "2.0.1",
+  "version": "2.1.0",
   "description": "Data Engineering Project Roadmap — end-to-end framework: lifecycle commands, implementation patterns, AI agent personas, and YAML templates for building production data pipelines",
   "keywords": [
     "data-engineering",
@@ -27,7 +27,8 @@
   "license": "MIT",
   "author": "DESKILL",
   "bin": {
-    "deskill": "tools/installer/cli.js"
+    "deskill": "tools/installer/cli.js",
+    "deskill-de": "tools/installer/cli.js"
   },
   "files": [
     "SKILL.md",
@@ -44,8 +45,13 @@
     "tools/installer/"
   ],
   "scripts": {
-    "install": "node tools/installer/cli.js install --yes",
-    "postinstall": "node tools/installer/cli.js setup"
+    "postinstall": "node tools/installer/cli.js install --yes"
+  },
+  "dependencies": {
+    "@clack/core": "^1.3.1",
+    "@clack/prompts": "^1.4.0",
+    "commander": "^14.0.0",
+    "picocolors": "^1.1.1"
   },
   "engines": {
     "node": ">=18.0.0"
