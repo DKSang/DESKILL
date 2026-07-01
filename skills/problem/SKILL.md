@@ -123,4 +123,3 @@ File `docs/business_problem.md` exists and has:
 
 After done → run `/sources` to evaluate each data source and create contracts.
 
-> Reference: `phases/phase-0-discover.md` for deep-dive methodology.

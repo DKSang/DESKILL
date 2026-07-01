@@ -169,4 +169,4 @@ erDiagram
 After done → run `/env` to set up your reproducible development environment.
 
 > Asset: `skills/schema/assets/dw_schema_template.md`
-> Reference: `phases/phase-2-architecture.md`
+

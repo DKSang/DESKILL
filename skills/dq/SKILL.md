@@ -269,4 +269,4 @@ if __name__ == "__main__":
 After done → run `/contract-check` to validate actual pipeline data against source contracts.
 
 > Asset: `skills/dq/assets/dq_checks_template.md`
-> Reference: `phases/phase-6-data-quality.md`
+

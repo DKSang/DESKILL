@@ -176,4 +176,4 @@ If a source cannot provide a required field for an analytical question → go ba
 After all contracts are done → run `/arch` to design your pipeline architecture and choose your tool stack.
 
 > Scripts: `scripts/probe_source.py` — live-test a source, print actual schema.
-> Reference: `phases/phase-1-data-contracts.md`
+

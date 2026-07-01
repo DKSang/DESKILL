@@ -191,4 +191,4 @@ pytest tests/ -v --tb=short   # Short traceback on failure
 After done → run `/dq` to implement runtime data quality monitoring.
 
 > Asset: `skills/test/assets/test_templates.md` — test templates by calculation type.
-> Reference: `phases/phase-5-transformation-testing.md`
+

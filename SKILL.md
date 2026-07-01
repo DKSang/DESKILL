@@ -104,23 +104,6 @@ SHIP
 
 ---
 
-## Phase Map (deep-dive methodology)
-
-For detailed methodology beyond each skill's instructions:
-
-| # | Phase | Deep-dive |
-|---|-------|-----------|
-| 0 | Discover | `phases/phase-0-discover.md` |
-| 1 | Data Contracts | `phases/phase-1-data-contracts.md` |
-| 2 | Architecture | `phases/phase-2-architecture.md` |
-| 3 | Environment | `phases/phase-3-environment-setup.md` |
-| 4 | Ingestion | `phases/phase-4-ingestion.md` |
-| 5 | Transformation + Testing | `phases/phase-5-transformation-testing.md` |
-| 6 | Data Quality | `phases/phase-6-data-quality.md` |
-| 7 | Serving | `phases/phase-7-serving.md` |
-| 8 | Orchestration | `phases/phase-8-orchestration.md` |
-| 9 | Governance / CI/CD | `phases/phase-9-governance.md` |
-
 ## Code Patterns
 
 For implementation-level patterns beyond what skills provide:
