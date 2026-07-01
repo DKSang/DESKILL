@@ -221,9 +221,11 @@ function writeOpenCodeConfig(targetDir, config) {
 
   const content = [
     '{',
-    '  "skills": [',
-    '    "./.deskill/plugin.json"',
-    '  ]',
+    '  "skills": {',
+    '    "paths": [',
+    '      "./.deskill"',
+    '    ]',
+    '  }',
     '}',
   ].join('\n') + '\n';
 
