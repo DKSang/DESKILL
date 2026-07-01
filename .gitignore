@@ -1,0 +1,48 @@
+# Environment
+.env
+.env.local
+*.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.eggs/
+*.egg
+.venv/
+venv/
+
+# dbt
+target/
+dbt_packages/
+logs/
+
+# Spark
+spark-warehouse/
+metastore_db/
+derby.log/
+
+# Airflow
+airflow/airflow.cfg
+airflow/airflow.db
+airflow/logs/
+airflow/webserver_config.py
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Great Expectations
+great_expectations/uncommitted/
+
+# Terraform
+*.tfstate
+*.tfstate.*
+.terraform/

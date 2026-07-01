@@ -1,0 +1,58 @@
+name: Quality
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Validate SKILL.md frontmatter
+        run: |
+          head -10 SKILL.md | grep -q "^---" && echo "SKILL.md: OK" || echo "SKILL.md: missing frontmatter"
+
+      - name: Validate command files
+        run: |
+          for f in commands/*.md; do
+            [ -f "$f" ] && echo "Found: $f ($(wc -c < $f) bytes)"
+          done
+
+      - name: Validate implementation files
+        run: |
+          for f in implementation/**/*.md; do
+            [ -f "$f" ] && echo "Found: $f ($(wc -c < $f) bytes)"
+          done
+
+      - name: Validate phase files
+        run: |
+          for i in 0 1 2 3 4 5 6 7 8 9; do
+            [ -f "phases/phase-$i-*.md" ] && echo "Phase $i: OK" || echo "Phase $i: MISSING"
+          done
+
+      - name: Validate YAML templates
+        run: |
+          for f in templates/*.yaml; do
+            node -e "
+              const fs = require('fs');
+              try { JSON.parse(JSON.stringify(fs.readFileSync('$f', 'utf8'))); console.log('$f: readable'); }
+              catch(e) { console.log('$f: ERROR ' + e.message); }
+            "
+          done
+
+      - name: Check for broken internal links
+        run: |
+          FILES=$(find . -name "*.md" -not -path "./node_modules/*")
+          echo "Checking $(echo "$FILES" | wc -l) markdown files..."
+          for f in $FILES; do
+            if grep -qP '\[.*\]\(\.\./' "$f" 2>/dev/null; then
+              echo "WARNING: $f contains relative parent links"
+            fi
+          done

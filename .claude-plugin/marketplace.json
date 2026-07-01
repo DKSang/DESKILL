@@ -1,0 +1,24 @@
+{
+  "plugins": [
+    {
+      "name": "deskill-de",
+      "version": "2.0.0",
+      "description": "Data Engineering Project Roadmap: lifecycle commands, implementation patterns, AI agent personas, and YAML templates for building production data pipelines",
+      "skills": [
+        "./commands/spec.md",
+        "./commands/plan.md",
+        "./commands/build.md",
+        "./commands/validate.md",
+        "./commands/review.md",
+        "./commands/ship.md",
+        "./commands/data-pipeline.md",
+        "./commands/data-driven-feature.md",
+        "./agents/data-engineer.md",
+        "./agents/backend-architect.md"
+      ],
+      "categories": ["Data Engineering", "Pipeline Development", "ETL/ELT"],
+      "author": "DESKILL",
+      "license": "MIT"
+    }
+  ]
+}

@@ -1,0 +1,69 @@
+# Release Gate — Evidence checklist for shipping pipeline changes
+# Generate: docs/release-gate-<version>.yaml
+
+apiVersion: releaseops.com/v1
+kind: ReleaseGate
+metadata:
+  name: <release-name>
+  version: <semver>
+  owner: <name>
+  date: <ISO-date>
+
+spec:
+  pipeline: <pipeline-name>
+  description: <What this release changes>
+
+  # === BUILD ===
+  build:
+    ingestionComplete: <true|false>
+    transformationComplete: <true|false>
+    testsPassing:
+      unit: <count-passed>/<count-total>
+      integration: <count-passed>/<count-total>
+      schema: <count-passed>/<count-total>
+
+  # === VALIDATE ===
+  validation:
+    qualityChecksPassed: <true|false>
+    qualityReportPath: <path>
+    contractsValidated: <true|false>
+    schemaDriftDetected: <true|false>
+
+  # === REVIEW ===
+  review:
+    architectureReviewed: <true|false>
+    codeReviewed: <true|false>
+    securityReviewed: <true|false>
+    reviewReportPath: <path>
+    issuesOpen: <number>
+    issuesCritical: <number>
+
+  # === DEPLOYMENT ===
+  deployment:
+    strategy: <blue-green|canary|rolling|recreate>
+    environment: <dev|staging|prod>
+    rollbackProcedure: <path>
+    canaryPercentage: <number>        # If canary deployment
+    monitoringDashboard: <url>
+
+  # === DOCUMENTATION ===
+  documentation:
+    readmeUpdated: <true|false>
+    dataLineageGenerated: <true|false>
+    costAnalysisDone: <true|false>
+    demoCaptured: <true|false>
+
+  # === GOVERNANCE ===
+  governance:
+    costEstimateMonthly: <USD>
+    accessControlDocumented: <true|false>
+    piiHandledCorrectly: <true|false>
+    dataRetentionDefined: <true|false>
+    slaDocumented: <true|false>
+
+  # === SIGN OFF ===
+  signOff:
+    engineeringLead: <name>
+    productOwner: <name>              # If applicable
+    date: <ISO-date>
+    notes: <Any caveats or known issues>

@@ -1,0 +1,10 @@
+{
+  "name": "deskill-de",
+  "version": "2.0.0",
+  "description": "Data Engineering Project Roadmap: lifecycle commands, implementation patterns, AI agent personas, and YAML templates for building production data pipelines",
+  "skills": "../",
+  "author": {
+    "name": "DESKILL"
+  },
+  "license": "MIT"
+}

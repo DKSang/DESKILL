@@ -1,0 +1,53 @@
+{
+  "name": "deskill-de",
+  "version": "2.0.1",
+  "description": "Data Engineering Project Roadmap — end-to-end framework: lifecycle commands, implementation patterns, AI agent personas, and YAML templates for building production data pipelines",
+  "keywords": [
+    "data-engineering",
+    "etl",
+    "elt",
+    "data-pipeline",
+    "dbt",
+    "airflow",
+    "spark",
+    "data-quality",
+    "data-warehouse",
+    "data-lake",
+    "medallion-architecture",
+    "great-expectations",
+    "ai-agent",
+    "claude-code",
+    "cursor",
+    "opencode"
+  ],
+  "homepage": "https://github.com/anomalyco/DESKILL#readme",
+  "bugs": {
+    "url": "https://github.com/anomalyco/DESKILL/issues"
+  },
+  "license": "MIT",
+  "author": "DESKILL",
+  "bin": {
+    "deskill": "tools/installer/cli.js"
+  },
+  "files": [
+    "SKILL.md",
+    "README.md",
+    "LICENSE",
+    "plugin.json",
+    "commands/",
+    "phases/",
+    "implementation/",
+    "templates/",
+    "agents/",
+    "references/",
+    "assets/",
+    "tools/installer/"
+  ],
+  "scripts": {
+    "install": "node tools/installer/cli.js install --yes",
+    "postinstall": "node tools/installer/cli.js setup"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

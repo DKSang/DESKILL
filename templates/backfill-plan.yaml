@@ -1,0 +1,73 @@
+# Backfill Plan — Safe data replay / reprocessing plan
+# Generate: docs/backfill-<pipeline-name>-<date>.yaml
+
+apiVersion: recoverops.com/v1
+kind: BackfillPlan
+metadata:
+  name: <backfill-name>
+  owner: <name>
+  created: <ISO-date>
+
+spec:
+  pipeline: <pipeline-name>         # e.g. "orders-pipeline"
+  reason: <data-correction|schema-change|bug-fix|replay>
+  description: <Why this backfill is needed>
+
+  # Scope — exact bounds of the backfill
+  scope:
+    source: <source-name>            # Which source to replay
+    table: <table-name>              # Target table
+    partitionColumn: <date-partition>
+    windowStart: <ISO-date>          # Inclusive
+    windowEnd: <ISO-date>            # Inclusive
+    estimatedRows: <number>
+    estimatedSize: <e.g. "50GB">
+
+  # Strategy
+  execution:
+    mode: <sequential|parallel>      # Sequential for safety
+    batchSize: <e.g. "daily">         # Process one partition at a time
+    maxConcurrent: <number>
+    timeoutHours: <number>
+
+  # Safeguards — must all be checked before execution
+  safeguards:
+    sourceAvailable: <true|false>
+    targetWritable: <true|false>
+    downstreamPaused: <true|false>   # Notify consumers first
+    upstreamFrozen: <true|false>     # Freeze source during backfill
+    storageAvailableGB: <number>     # Confirm enough space
+    rollbackPlanExists: <true|false>
+
+  # Validation checks — run after each batch
+  validation:
+    rowCountMatch:
+      source: <expected count>
+      target: <actual count>
+    checksum: <column|none>
+    sampleCompare: <percentage>      # e.g. "100%" for small, "1%" for large
+    qualityGate: <suite-name>        # Great Expectations suite to run
+
+  # Rollback plan
+  rollback:
+    strategy: <restore-from-snapshot|replay-reverse|delete-inserted>
+    snapshotLocation: <path>
+    estimatedRevertTimeMinutes: <number>
+
+  # Communication
+  notifications:
+    - channel: <slack|email>
+      recipients:
+        - <person-or-channel>
+      events:
+        - started
+        - batch-completed
+        - completed
+        - failed
+
+  # Approval
+  approval:
+    required: <true|false>
+    approvedBy: <name>
+    approvedDate: <ISO-date>
+    stakeHolderNotified: <true|false>
