@@ -200,4 +200,4 @@ def get_data(
 
 After done → run `/ci` to set up CI/CD for automated testing.
 
-
+> Reference: `phases/phase-7-serving.md`

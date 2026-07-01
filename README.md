@@ -88,7 +88,7 @@ DESKILL/
 │   ├── serve/                      #   Serving layer (dashboard / API)
 │   ├── ci/                         #   CI/CD (GitHub Actions)
 │   └── docs/                       #   Documentation
-
+├── phases/                         # Deep-dive methodology (10 phases)
 ├── implementation/                 # Code patterns: Airflow, dbt, Spark, GE
 └── agents/                         # AI agent personas
 ```

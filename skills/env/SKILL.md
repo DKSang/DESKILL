@@ -221,4 +221,4 @@ services:
 After done → run `/ingest` to implement the Bronze ingestion layer.
 
 > Asset: `skills/env/assets/docker-compose-base.yml` — ready-to-customize template.
-
+> Reference: `phases/phase-3-environment-setup.md`

@@ -143,3 +143,4 @@ graph LR
 After done → run `/schema` to design your DW schema (Fact/Dimension tables).
 
 > Reference: `skills/arch/references/patterns.md` — detailed ETL/ELT/Lambda/Kappa/Lakehouse tradeoffs.
+> `phases/phase-2-architecture.md` — deeper methodology.
