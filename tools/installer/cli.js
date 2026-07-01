@@ -222,6 +222,13 @@ function writeOpenCodeConfig(targetDir, config) {
   const content = '{}\n';
 
   fs.writeFileSync(path.join(opencodeDir, 'opencode.json'), content);
+
+  const deskillSkillDir = path.join(opencodeDir, 'skills', 'deskill');
+  fs.mkdirSync(deskillSkillDir, { recursive: true });
+
+  const srcSkill = path.join(ROOT, 'SKILL.md');
+  const destSkill = path.join(deskillSkillDir, 'SKILL.md');
+  if (fs.existsSync(srcSkill)) fs.copyFileSync(srcSkill, destSkill);
 }
 
 // ─── Install logic ───────────────────────────────────────────────
