@@ -1,0 +1,198 @@
+# docker-compose-base.yml
+# Base template — copy to docker-compose.yml and customize tool selection.
+# Remove services not in your stack. Add tool-specific services as needed.
+# Run: docker compose up -d
+
+version: '3.8'
+
+# ─── Shared environment ───────────────────────────────────────────────────────
+x-common-env: &common-env
+  env_file: .env
+
+# ─── Networks ─────────────────────────────────────────────────────────────────
+networks:
+  pipeline-net:
+    driver: bridge
+
+# ─── Volumes (persistent data) ────────────────────────────────────────────────
+volumes:
+  postgres-data:      # Airflow metadata DB
+  minio-data:         # Object storage
+  airflow-logs:       # Airflow task logs
+  dagster-storage:    # Dagster storage (if using Dagster instead of Airflow)
+
+services:
+
+  # ┌─────────────────────────────────────────────────────────────────────────┐
+  # │  INFRASTRUCTURE SERVICES (always keep)                                  │
+  # └─────────────────────────────────────────────────────────────────────────┘
+
+  # ─── PostgreSQL — metadata DB for orchestrator ────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: pipeline-postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-pipeline}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-pipeline}
+      POSTGRES_DB: ${POSTGRES_DB:-pipeline}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - pipeline-net
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "${POSTGRES_USER:-pipeline}"]
+      interval: 10s
+      retries: 5
+      start_period: 5s
+    restart: unless-stopped
+
+  # ─── MinIO — S3-compatible object storage ─────────────────────────────────
+  minio:
+    image: minio/minio:latest
+    container_name: pipeline-minio
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin}
+    volumes:
+      - minio-data:/data
+    ports:
+      - "9000:9000"   # API
+      - "9001:9001"   # Console UI
+    networks:
+      - pipeline-net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 10s
+      retries: 5
+      start_period: 5s
+    restart: unless-stopped
+
+  # ─── MinIO init — create default bucket ───────────────────────────────────
+  minio-init:
+    image: minio/mc:latest
+    container_name: pipeline-minio-init
+    depends_on:
+      minio:
+        condition: service_healthy
+    entrypoint: >
+      /bin/sh -c "
+        mc alias set local http://minio:9000 $${MINIO_ROOT_USER} $${MINIO_ROOT_PASSWORD};
+        mc mb --ignore-existing local/${MINIO_BUCKET:-pipeline};
+        echo 'MinIO bucket ready';
+      "
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin}
+      MINIO_BUCKET: ${MINIO_BUCKET:-pipeline}
+    networks:
+      - pipeline-net
+
+  # ┌─────────────────────────────────────────────────────────────────────────┐
+  # │  ORCHESTRATION — choose ONE block below, delete the other              │
+  # └─────────────────────────────────────────────────────────────────────────┘
+
+  # ─── OPTION A: Apache Airflow ─────────────────────────────────────────────
+  airflow-init:
+    image: apache/airflow:2.9.0
+    container_name: pipeline-airflow-init
+    entrypoint: /bin/bash
+    command: >
+      -c "
+        airflow db init &&
+        airflow users create
+          --username ${AIRFLOW_USER:-admin}
+          --password ${AIRFLOW_PASSWORD:-admin}
+          --firstname Admin --lastname User
+          --role Admin --email admin@example.com
+      "
+    environment:
+      <<: *common-env
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${POSTGRES_USER:-pipeline}:${POSTGRES_PASSWORD:-pipeline}@postgres/${POSTGRES_DB:-pipeline}
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - pipeline-net
+
+  airflow-webserver:
+    image: apache/airflow:2.9.0
+    container_name: pipeline-airflow-web
+    command: webserver
+    environment:
+      <<: *common-env
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${POSTGRES_USER:-pipeline}:${POSTGRES_PASSWORD:-pipeline}@postgres/${POSTGRES_DB:-pipeline}
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./ingestion:/opt/airflow/ingestion
+      - ./quality:/opt/airflow/quality
+      - ./transform:/opt/airflow/transform
+      - airflow-logs:/opt/airflow/logs
+    networks:
+      - pipeline-net
+    depends_on:
+      - airflow-init
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:8080/health"]
+      interval: 30s
+      retries: 5
+      start_period: 30s
+    restart: unless-stopped
+
+  airflow-scheduler:
+    image: apache/airflow:2.9.0
+    container_name: pipeline-airflow-scheduler
+    command: scheduler
+    environment:
+      <<: *common-env
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${POSTGRES_USER:-pipeline}:${POSTGRES_PASSWORD:-pipeline}@postgres/${POSTGRES_DB:-pipeline}
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./ingestion:/opt/airflow/ingestion
+      - ./quality:/opt/airflow/quality
+      - ./transform:/opt/airflow/transform
+      - airflow-logs:/opt/airflow/logs
+    networks:
+      - pipeline-net
+    depends_on:
+      - airflow-init
+    restart: unless-stopped
+
+  # ─── OPTION B: Dagster (delete if using Airflow) ──────────────────────────
+  # dagster-webserver:
+  #   image: dagster/dagster-k8s:latest
+  #   container_name: pipeline-dagster-web
+  #   command: dagster-webserver -h 0.0.0.0 -p 3000
+  #   ports:
+  #     - "3000:3000"
+  #   volumes:
+  #     - ./dagster_home:/opt/dagster/dagster_home
+  #   networks:
+  #     - pipeline-net
+
+  # ┌─────────────────────────────────────────────────────────────────────────┐
+  # │  OPTIONAL: Serving layer (uncomment if needed)                          │
+  # └─────────────────────────────────────────────────────────────────────────┘
+
+  # ─── Streamlit dashboard ──────────────────────────────────────────────────
+  # streamlit:
+  #   build:
+  #     context: .
+  #     dockerfile: serving/Dockerfile
+  #   container_name: pipeline-dashboard
+  #   command: streamlit run serving/app.py --server.port 8501
+  #   ports:
+  #     - "8501:8501"
+  #   volumes:
+  #     - ./data:/app/data
+  #   networks:
+  #     - pipeline-net
+  #   depends_on:
+  #     - minio

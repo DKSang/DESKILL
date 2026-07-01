@@ -28,7 +28,7 @@ Thanks for your interest! This repo is a community-driven data engineering skill
 - Add comments for clarity
 - Test your examples
 
-**For templates (templates/):**
+**For skill assets (skills/*/assets/):**
 - Machine-verifiable YAML preferred over free-form markdown
 - Include all required fields with descriptions
 - Add example values

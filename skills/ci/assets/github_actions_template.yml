@@ -1,0 +1,170 @@
+# .github/workflows/ci.yml — GitHub Actions CI template
+# Copy to: .github/workflows/ci.yml
+# Customize: PYTHON_VERSION, test commands, secrets names
+
+name: CI — Data Pipeline Tests
+
+on:
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'ingestion/**'
+      - 'transform/**'
+      - 'quality/**'
+      - 'serving/**'
+      - 'tests/**'
+      - 'models/**'        # dbt models
+      - 'requirements.txt'
+      - '.github/workflows/ci.yml'
+  push:
+    branches: [main]
+
+env:
+  PYTHON_VERSION: "3.11"
+  # Override per-project if needed:
+  # DBT_PROFILES_DIR: "."
+  # AIRFLOW_HOME: "/tmp/airflow"
+
+jobs:
+
+  # ─── Job 1: Lint + Unit Tests ─────────────────────────────────────────────
+  test:
+    name: Lint & Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Cache pip packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest pytest-cov ruff  # always install test/lint tools
+
+      - name: Lint with ruff (non-blocking)
+        run: |
+          ruff check ingestion/ transform/ quality/ serving/ tests/ \
+            --output-format=github
+        continue-on-error: true   # Lint warnings don't block CI
+
+      - name: Run unit tests with coverage
+        env:
+          # Source credentials — use mock/test values in CI
+          # For integration tests that need real APIs, add secrets here:
+          # SOURCE_API_KEY: ${{ secrets.SOURCE_API_KEY }}
+
+          # Local storage config (no real cloud needed in CI)
+          MINIO_ROOT_USER: minioadmin
+          MINIO_ROOT_PASSWORD: minioadmin
+          BRONZE_PATH: /tmp/test-bronze
+        run: |
+          pytest tests/ \
+            --verbose \
+            --tb=short \
+            --junitxml=test-results/junit.xml \
+            --cov=ingestion \
+            --cov=transform \
+            --cov=quality \
+            --cov-report=xml:coverage.xml \
+            --cov-report=term-missing \
+            --cov-fail-under=70
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results-${{ github.run_id }}
+          path: |
+            test-results/
+            coverage.xml
+          retention-days: 7
+
+  # ─── Job 2: dbt Tests (only if dbt project exists) ────────────────────────
+  dbt-test:
+    name: dbt Build & Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    if: hashFiles('dbt_project.yml') != ''   # skip if no dbt project
+    needs: test   # Run after unit tests pass
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Cache dbt packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.dbt
+          key: ${{ runner.os }}-dbt-${{ hashFiles('packages.yml') }}
+
+      - name: Install dbt
+        run: |
+          pip install dbt-core dbt-duckdb  # adjust adapter to your stack
+
+      - name: Install dbt packages
+        run: dbt deps
+
+      - name: dbt build (compile + run + test)
+        env:
+          DBT_PROFILES_DIR: .
+        run: |
+          # Use CI profile with DuckDB (no cloud credentials needed)
+          dbt build \
+            --target ci \
+            --profiles-dir . \
+            --fail-fast
+        # If dbt build fails: artifacts below help debug
+
+      - name: Upload dbt artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: dbt-artifacts-${{ github.run_id }}
+          path: target/
+          retention-days: 3
+
+  # ─── Job 3: Coverage Report on PR ─────────────────────────────────────────
+  coverage:
+    name: Coverage Comment
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.event_name == 'pull_request'
+    permissions:
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download coverage artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: test-results-${{ github.run_id }}
+
+      - name: Post coverage comment on PR
+        uses: orgoro/coverage@v3
+        with:
+          coverageFile: coverage.xml
+          token: ${{ secrets.GITHUB_TOKEN }}
+          thresholdAll: 0.70    # Fail comment if overall < 70%
+          thresholdNew: 0.80    # Fail comment if new code < 80%
+          thresholdModified: 0.70

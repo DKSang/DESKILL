@@ -36,27 +36,31 @@ git clone https://github.com/anomalyco/DESKILL.git
 
 ---
 
-## Quick Start — 6 Lifecycle Commands
+## Quick Start — 14 Sequential Skills
 
-Chạy theo thứ tự, mỗi command có hướng dẫn step-by-step:
+Chạy theo thứ tự, mỗi skill gợi ý skill tiếp theo:
 
-```mermaid
-flowchart LR
-    A[/spec] --> B[/plan]
-    B --> C[/build]
-    C --> D[/validate]
-    D --> E[/review]
-    E --> F[/ship]
+```
+  /problem → /sources → /arch → /schema → /env → /ingest → /transform
+  → /test → /dq → /contract-check → /dag → /serve → /ci → /docs
 ```
 
-| Command | Làm gì | Output |
-|---------|--------|--------|
-| `/spec` | Define business problem + data contracts | `docs/business_problem.md` + `contracts/*.yaml` |
-| `/plan` | Design architecture + set up environment | `docs/architecture.md` + Docker Compose + dbt init |
-| `/build` | Implement ingestion + transformation | Bronze/Silver/Gold tables + test suite |
-| `/validate` | Data quality checks + contract validation | Quality report + release gate evidence |
-| `/review` | Peer review architecture, code, security | Review report |
-| `/ship` | Deploy, orchestrate, document, CI/CD | Production pipeline + README + lineage |
+| Skill | Output |
+|-------|--------|
+| `/problem` | `docs/business_problem.md` |
+| `/sources` | `contracts/source-*.yaml` |
+| `/arch` | `docs/architecture.md` |
+| `/schema` | `docs/dw_schema.md` |
+| `/env` | `docker-compose.yml` |
+| `/ingest` | `ingestion/<source>/ingest.py` |
+| `/transform` | Silver + Gold models |
+| `/test` | `tests/` all passing |
+| `/dq` | `quality/dq_checks.py` |
+| `/contract-check` | Contract validation report |
+| `/dag` | `dags/<project>_pipeline.py` |
+| `/serve` | `serving/app.py` |
+| `/ci` | `.github/workflows/ci.yml` |
+| `/docs` | `README.md` + lineage + cost |
 
 ---
 
@@ -64,15 +68,28 @@ flowchart LR
 
 ```
 DESKILL/
-├── SKILL.md                        # Entry point — principles, navigation, phase map
+├── SKILL.md                        # Entry point — principles, skill flow, phase map
+├── plugin.json                     # Plugin manifest
 ├── package.json                    # npm package + CLI installer
-├── commands/                       # 6 lifecycle commands + 2 orchestrator commands
+├── commands/                       # Orchestrator commands: data-pipeline, data-driven-feature
+├── skills/                         # 14 atomic skills (1 deliverable each)
+│   ├── problem/                    #   Business problem definition
+│   ├── sources/                    #   Source evaluation + data contracts
+│   ├── arch/                       #   Pipeline architecture design
+│   ├── schema/                     #   DW schema (Fact/Dim tables)
+│   ├── env/                        #   Development environment setup
+│   ├── ingest/                     #   Bronze ingestion layer
+│   ├── transform/                  #   Silver + Gold transformations
+│   ├── test/                       #   Test suite (schema + logic)
+│   ├── dq/                         #   Runtime data quality checks
+│   ├── contract-check/             #   Data vs contract validation
+│   ├── dag/                        #   Orchestration DAG
+│   ├── serve/                      #   Serving layer (dashboard/API)
+│   ├── ci/                         #   CI/CD (GitHub Actions)
+│   └── docs/                       #   Documentation
 ├── phases/                         # Deep-dive methodology (10 phases)
 ├── implementation/                 # Code patterns: Airflow, dbt, Spark, GE
-├── templates/                      # YAML templates: contracts, backfill, release gate
-├── agents/                         # AI agent personas: data-engineer, backend-architect
-├── references/                     # Anti-patterns + legacy phase docs
-└── assets/                         # Fill-in-the-blank templates
+└── agents/                         # AI agent personas: data-engineer, backend-architect
 ```
 
 ---
@@ -84,21 +101,21 @@ DESKILL/
 - **Iterative:** Phases có feedback loops — phát hiện ở phase sau có thể quay lại sửa phase trước
 - **AI-native:** Designed để dùng với AI pair-engineer ở mọi phase
 - **Production patterns:** Code examples từ Airflow, dbt, Spark, Great Expectations
-- **Safe operations:** Backfill plan template + release gate + anti-patterns reference
+- **Parallel by design:** Mỗi skill độc lập, chạy tuần tự với gợi ý skill tiếp theo
 
 ---
 
 ## So sánh với các framework khác
 
 | | DESKILL | wshobson/agents | vaquarkhan/agent-skills |
-|---|---|---|---|
-| Methodology | 10-phase roadmap + 6 lifecycle commands | ❌ | ❌ (chỉ skill rời rạc) |
+|---|---|---|---|---|
+| Methodology | 10-phase roadmap + 14 sequential skills | ❌ | ❌ (chỉ skill rời rạc) |
 | Code patterns | Airflow, dbt, Spark, GE | Airflow, dbt, Spark, GE | ❌ |
 | AI agent personas | data-engineer + backend-architect | data-engineer + backend-architect | ❌ |
-| Lifecycle commands | /spec → /plan → /build → /validate → /review → /ship | ❌ | ❌ |
+| Skill graph | 14 skills, mỗi skill gợi ý skill tiếp theo | ❌ | ❌ |
 | Anti-patterns | ~30 common mistakes cataloged | ❌ | ✅ (trong 73 skills) |
-| Templates | 3 YAML + 2 markdown | ❌ | 8 YAML |
-| Packaging | npm + CLI + CI/CD | Plugin-only | Full IDE integration |
+| Templates | 14 skill assets | ❌ | 8 YAML |
+| Packaging | npm + CLI + CI/CD + plugin | Plugin-only | Full IDE integration |
 
 ---
 
@@ -106,7 +123,6 @@ DESKILL/
 
 - **Process methodology:** Inspired by *Fundamentals of Data Engineering* (Reis & Housley)
 - **Implementation patterns:** Adapted from [wshobson/agents](https://github.com/wshobson/agents) (MIT)
-- **Lifecycle commands + templates:** Inspired by [vaquarkhan/data-engineering-agent-skills](https://github.com/vaquarkhan/data-engineering-agent-skills)
 - **Packaging pattern:** Inspired by [BMAD-METHOD](https://github.com/bmad-code-org/BMAD-METHOD)
 
 ---

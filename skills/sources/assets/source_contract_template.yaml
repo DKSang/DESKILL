@@ -1,0 +1,93 @@
+# source-contract.yaml — Fill-in template for one data source
+# File naming: contracts/source-<name>.yaml
+# Copy this file per source; fill every field before writing ingestion code.
+
+apiVersion: datacontract.com/v1.0.0
+kind: DataContract
+metadata:
+  name: <source-name>             # e.g. "polygon-ohlc", "news-api", "yfinance"
+  version: 1.0.0
+  owner: <team-or-person>
+  lastVerified: <YYYY-MM-DD>      # Date you actually called the API live — not just read docs
+
+info:
+  title: <Source Display Name>
+  description: <One-line description of what this source provides>
+  purpose: <Which analytical question(s) from business_problem.md this source enables>
+
+access:
+  method: <api|file|database|scrape>     # Prefer api or file; avoid scrape
+  authType: <none|api-key|oauth|service-account>
+  endpoint: <base URL or file path>
+  docsUrl: <URL to official API docs>
+
+terms:
+  cost: <$0 or actual monthly cost>
+  license: <Link to terms of service / usage policy>
+  restrictions: <Any restrictions relevant to this project>
+
+rateLimit:
+  limit: <X calls per unit>              # e.g. "500 calls/day"
+  unit: <minute|hour|day>
+  burstLimit: <if applicable>
+
+volume:
+  callsPerRun: <calculated number>
+  math: |
+    <Show your work, e.g.:
+    500 tickers × 1 call/ticker × 1 run/day = 500 calls/day
+    Free tier: 500 calls/day → margin = 1.0x (just fits)>
+  fitsWithinLimit: <true|false>
+  marginX: <ratio: limit / callsPerRun, must be ≥ 1>
+
+schedule:
+  frequency: <monthly|daily|intraday|on-demand>
+  cronExpression: <"0 1 * * *" for daily at 1am>
+  reasoning: <Why this cadence — tied to source update frequency>
+
+schema:
+  # IMPORTANT: Fill from a LIVE API call, not from docs.
+  # Run: python skills/sources/scripts/probe_source.py --url <endpoint> ...
+  type: object
+  sampleResponse: |
+    <Paste actual JSON response snippet here — not the docs' claimed schema>
+  properties:
+    <field-name>:
+      type: <string|integer|number|boolean|datetime|date>
+      description: <Human-readable description>
+      required: <true|false>
+      pii: <true|false>
+      example: <actual sample value from live response>
+    # Add more fields...
+
+  required:
+    - <list required field names>
+
+joinKey:
+  field: <field name used to join with other sources>
+  matchesWith:
+    - source: <other source name>
+      field: <corresponding field in that source>
+  caseMatches: <true|false>           # Does case need to match?
+  formatMatches: <true|false>         # Same format (e.g. "AAPL" vs "aapl")?
+  verified: <true|false>              # Have you actually tested a join?
+  notes: <any format differences, mapping table needed, etc.>
+
+breakingChangeRisk: <low|medium|high>
+breakingChangeReasoning: |
+  <low: versioned API (v1/v2), official docs, stable company>
+  <medium: no versioning but official and rarely changes>
+  <high: unofficial / undocumented / scraping>
+
+quality:
+  checks:
+    - row_count > 0
+    - missing_count(<pk-field>) = 0
+    - duplicate_count(<pk-field>) = 0
+    - freshness(<timestamp-field>) < <SLA>
+    # Add domain-specific checks
+
+sla:
+  freshness: <e.g. "24h" — max acceptable age of data>
+  availability: <e.g. "99%" — what downtime is acceptable>
+  retention: <e.g. "90 days" — how long to keep raw data>

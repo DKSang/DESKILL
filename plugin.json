@@ -1,14 +1,23 @@
 {
   "name": "deskill-de",
-  "version": "2.0.0",
-  "description": "Data Engineering Project Roadmap: lifecycle commands, implementation patterns, AI agent personas, and YAML templates for building production data pipelines",
+  "version": "3.1.0",
+  "description": "Data Engineering Project Roadmap: 14 sequential skills covering the full DE lifecycle — from business problem to production pipeline. Each skill owns one deliverable and suggests the next skill to use.",
   "skills": [
-    "./commands/spec.md",
-    "./commands/plan.md",
-    "./commands/build.md",
-    "./commands/validate.md",
-    "./commands/review.md",
-    "./commands/ship.md",
+    "./SKILL.md",
+    "./skills/problem/SKILL.md",
+    "./skills/sources/SKILL.md",
+    "./skills/arch/SKILL.md",
+    "./skills/schema/SKILL.md",
+    "./skills/env/SKILL.md",
+    "./skills/ingest/SKILL.md",
+    "./skills/transform/SKILL.md",
+    "./skills/test/SKILL.md",
+    "./skills/dq/SKILL.md",
+    "./skills/contract-check/SKILL.md",
+    "./skills/dag/SKILL.md",
+    "./skills/serve/SKILL.md",
+    "./skills/ci/SKILL.md",
+    "./skills/docs/SKILL.md",
     "./commands/data-pipeline.md",
     "./commands/data-driven-feature.md",
     "./agents/data-engineer.md",
@@ -21,7 +30,7 @@
   "license": "MIT",
   "interface": {
     "displayName": "DESKILL Data Engineering",
-    "shortDescription": "End-to-end DE framework: lifecycle commands, code patterns, agent personas, templates",
+    "shortDescription": "14 sequential DE skills: problem → sources → arch → schema → env → ingest → transform → test → dq → contract-check → dag → serve → ci → docs",
     "category": "Data Engineering"
   }
 }
