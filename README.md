@@ -6,7 +6,11 @@
   <em>Data Engineering Project Roadmap — from business problem to production pipeline</em>
 </p>
 
-
+<p align="center">
+  <a href="https://www.npmjs.com/package/deskill-de"><img src="https://img.shields.io/npm/v/deskill-de" alt="npm version"/></a>
+  <a href="LICENSE"><img src="https://img.shields.io/npm/l/deskill-de" alt="MIT License"/></a>
+  <a href="https://www.npmjs.com/package/deskill-de"><img src="https://img.shields.io/npm/dt/deskill-de" alt="npm downloads"/></a>
+</p>
 
 ---
 
