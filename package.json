@@ -42,6 +42,7 @@
     "agents/",
     "references/",
     "assets/",
+    "skills/",
     "tools/installer/"
   ],
   "scripts": {

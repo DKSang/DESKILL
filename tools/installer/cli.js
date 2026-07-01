@@ -134,12 +134,18 @@ function writeClaudeDotMd(targetDir, config) {
     '- **data-engineer**: Use for hands-on pipeline building',
     '- **backend-architect**: Use for system design and architecture decisions',
     '',
+    '### 14 Sequential Skills',
+    'Run each skill in order \u2014 each produces one deliverable and suggests the next:',
+    '`problem` \u2192 `sources` \u2192 `arch` \u2192 `schema` \u2192 `env` \u2192 `ingest` \u2192 `transform` \u2192 `test` \u2192 `dq` \u2192 `contract-check` \u2192 `dag` \u2192 `serve` \u2192 `ci` \u2192 `docs`',
+    'Invoke: `read .deskill/skills/<name>/SKILL.md and guide me through it`',
+    '',
     '## How to Use',
     '',
     '1. Read `.deskill/SKILL.md` for the full methodology.',
     '2. Start with `/spec` to define the business problem.',
     '3. Work through lifecycle commands in order.',
     '4. Use agent personas for specialized tasks.',
+    '5. Run individual skills for step-by-step guided execution.',
     '',
     `## Configuration`,
     `- Agent name: ${config.userName}`,
@@ -161,9 +167,13 @@ function writeGithubCopilotInstructions(targetDir, config) {
     'This project follows the DESKILL Data Engineering Project Roadmap.',
     '',
     '## Project Structure',
-    '- `.deskill/` — DESKILL framework files (commands, phases, templates, agents)',
+    '- `.deskill/` — DESKILL framework files (skills, commands, phases, templates, agents)',
     '- `docs/` — Project documentation and architecture decisions',
     '- `' + config.outputFolder + '/` — Planning, implementation, and learning artifacts',
+    '',
+    '## 14 Sequential Skills',
+    'Each skill produces one deliverable: problem \u2192 sources \u2192 arch \u2192 schema \u2192 env \u2192 ingest \u2192 transform \u2192 test \u2192 dq \u2192 contract-check \u2192 dag \u2192 serve \u2192 ci \u2192 docs',
+    'Reference: `.deskill/skills/<name>/SKILL.md`',
     '',
     '## Lifecycle Commands',
     `When the user mentions any of these commands, reference .deskill/commands/ for guidance:`,
@@ -200,12 +210,14 @@ function writeCursorRules(targetDir, config) {
     'This project uses DESKILL (v' + packageJson.version + ').',
     '',
     '## Capabilities',
+    '- 14 sequential skills: problem → sources → arch → schema → env → ingest → transform → test → dq → contract-check → dag → serve → ci → docs',
     '- Lifecycle commands: /spec, /plan, /build, /validate, /review, /ship',
     '- Agent personas: data-engineer, backend-architect',
     '- Methodology: 10-phase DE lifecycle (discover → governance)',
     '',
     '## Reference',
     '- Full methodology: .deskill/SKILL.md',
+    '- Skills: .deskill/skills/',
     '- Commands: .deskill/commands/',
     '- Templates: .deskill/templates/',
     '- Agent prompts: .deskill/agents/',
@@ -229,6 +241,20 @@ function writeOpenCodeConfig(targetDir, config) {
   const srcSkill = path.join(ROOT, 'SKILL.md');
   const destSkill = path.join(deskillSkillDir, 'SKILL.md');
   if (fs.existsSync(srcSkill)) fs.copyFileSync(srcSkill, destSkill);
+
+  const deskillSkillsDir = path.join(ROOT, 'skills');
+  if (fs.existsSync(deskillSkillsDir)) {
+    const skillDirs = fs.readdirSync(deskillSkillsDir, { withFileTypes: true });
+    for (const entry of skillDirs) {
+      if (entry.isDirectory()) {
+        const skillSrc = path.join(deskillSkillsDir, entry.name, 'SKILL.md');
+        const skillDestDir = path.join(deskillSkillDir, entry.name);
+        fs.mkdirSync(skillDestDir, { recursive: true });
+        const skillDest = path.join(skillDestDir, 'SKILL.md');
+        if (fs.existsSync(skillSrc) && !fs.existsSync(skillDest)) fs.copyFileSync(skillSrc, skillDest);
+      }
+    }
+  }
 
   const opencodeCommandsDir = path.join(opencodeDir, 'commands');
   fs.mkdirSync(opencodeCommandsDir, { recursive: true });
@@ -254,6 +280,7 @@ async function doInstall(targetDir, components, config) {
   const s = await prompts.spinner();
 
   const dirMap = {
+    skills: 'skills',
     commands: 'commands',
     phases: 'phases',
     implementation: 'implementation',
@@ -353,6 +380,7 @@ async function promptDirectory(targetDir) {
 
 async function promptComponents() {
   const choices = [
+    { name: '14 Sequential Skills', value: 'skills', hint: 'problem → sources → arch → schema → env → ingest → transform → test → dq → contract-check → dag → serve → ci → docs', checked: true },
     { name: 'Lifecycle Commands', value: 'commands', hint: '/spec, /plan, /build, /validate, /review, /ship', checked: true },
     { name: '10-Phase Methodology', value: 'phases', hint: 'Deep-dive DE lifecycle docs', checked: true },
     { name: 'Implementation Patterns', value: 'implementation', hint: 'Airflow, dbt, Spark, Great Expectations patterns', checked: true },
@@ -517,7 +545,7 @@ async function installAction(options) {
   const confirmedDir = options.yes ? targetDir : await promptDirectory(targetDir);
 
   const components = options.yes
-    ? ['commands', 'phases', 'implementation', 'templates', 'agents', 'references', 'assets', 'root-files']
+    ? ['skills', 'commands', 'phases', 'implementation', 'templates', 'agents', 'references', 'assets', 'root-files']
     : await promptComponents();
 
   const tools = options.yes ? [] : await promptTools();
@@ -561,6 +589,7 @@ async function installAction(options) {
     '    2. Ask your AI agent: "Read .deskill/SKILL.md and help me start"',
     '    3. Run lifecycle commands in order:',
     '       /spec \u2192 /plan \u2192 /build \u2192 /validate \u2192 /review \u2192 /ship',
+    '    4. Or run a specific skill: "Read .deskill/skills/<name>/SKILL.md"',
   ];
 
   await prompts.note(lines.filter(Boolean).join('\n'), 'DESKILL is ready to use!');
