@@ -1,4 +1,4 @@
----
+﻿---
 name: de-env
 description: "Create a reproducible local development environment and produce `docker-compose.yml`, `.env.template`, and `requirements.txt`. Use this skill when the user asks 'how do I set up my environment', 'write a docker-compose for [tools]', 'configure my dev environment', 'what do I need to install', 'how do I containerize my pipeline', or has committed to a tool stack and needs it running locally."
 ---
@@ -7,7 +7,7 @@ description: "Create a reproducible local development environment and produce `d
 
 ## Purpose
 
-Create a **reproducible** local environment — anyone who clones the repo can run `docker compose up` and get the same environment, no manual steps. "It works on my machine" is not an acceptable answer.
+Create a **reproducible** local environment â€” anyone who clones the repo can run `docker compose up` and get the same environment, no manual steps. "It works on my machine" is not an acceptable answer.
 
 ## When to stop at this skill
 
@@ -15,7 +15,7 @@ Done when `docker compose up` succeeds from a **fresh clone** (not from a machin
 
 ## Steps
 
-### Step 1 — Identify services that need containerization
+### Step 1 â€” Identify services that need containerization
 
 From `docs/architecture.md` (tool choices), list the services:
 
@@ -28,23 +28,23 @@ From `docs/architecture.md` (tool choices), list the services:
 | PostgreSQL | postgres | 5432 |
 | Redis | redis | 6379 |
 | Spark | spark-master, spark-worker | 7077, 8081 |
-| DuckDB | No container needed — file-based | - |
+| DuckDB | No container needed â€” file-based | - |
 
-### Step 2 — Create docker-compose.yml
+### Step 2 â€” Create docker-compose.yml
 
 Rules when writing:
 - **Each service gets its own block** with a tool name comment
 - **Volumes** for data persistence (data shouldn't disappear on container restart)
 - **Health checks** so downstream services know when upstream is ready
-- **Env vars** from `.env` file — never hardcode credentials
+- **Env vars** from `.env` file â€” never hardcode credentials
 - **Networks** explicit so services can communicate
 
-### Step 3 — Create .env.template
+### Step 3 â€” Create .env.template
 
 List **every** environment variable needed:
 
 ```bash
-# .env.template — copy to .env and fill in values
+# .env.template â€” copy to .env and fill in values
 # NEVER commit .env to git
 
 # Orchestrator
@@ -60,7 +60,7 @@ MINIO_ROOT_USER=
 MINIO_ROOT_PASSWORD=
 ```
 
-### Step 4 — Pin dependencies
+### Step 4 â€” Pin dependencies
 
 Create `requirements.txt` with **pinned versions**:
 
@@ -73,9 +73,9 @@ pandas==2.2.0
 requests==2.31.0
 ```
 
-Reason for pinning: `pip install apache-airflow` today may install a different version than 3 months from now → environment is not reproducible.
+Reason for pinning: `pip install apache-airflow` today may install a different version than 3 months from now â†’ environment is not reproducible.
 
-### Step 5 — Verify from fresh clone
+### Step 5 â€” Verify from fresh clone
 
 Test acceptance criteria:
 
@@ -89,16 +89,16 @@ docker compose up -d
 curl http://localhost:8080/health  # Or appropriate URL for your tool
 ```
 
-If any step needs a manual step not in the README → not done yet.
+If any step needs a manual step not in the README â†’ not done yet.
 
-## Output format
+## Output
 
 Create 3 files:
 
 ### `docker-compose.yml`
 
 ```yaml
-# docker-compose.yml — Run: docker compose up -d
+# docker-compose.yml â€” Run: docker compose up -d
 # Requires: .env file from .env.template
 
 version: '3.8'
@@ -117,7 +117,7 @@ volumes:
 
 services:
 
-  # ─── PostgreSQL (metadata DB for Airflow) ───
+  # â”€â”€â”€ PostgreSQL (metadata DB for Airflow) â”€â”€â”€
   postgres:
     image: postgres:16-alpine
     environment:
@@ -134,7 +134,7 @@ services:
       retries: 5
       start_period: 5s
 
-  # ─── MinIO (object storage, S3-compatible) ───
+  # â”€â”€â”€ MinIO (object storage, S3-compatible) â”€â”€â”€
   minio:
     image: minio/minio:latest
     command: server /data --console-address ":9001"
@@ -153,7 +153,7 @@ services:
       interval: 10s
       retries: 5
 
-  # ─── Airflow (replace with your chosen orchestrator) ───
+  # â”€â”€â”€ Airflow (replace with your chosen orchestrator) â”€â”€â”€
   airflow-init:
     image: apache/airflow:2.9.0
     entrypoint: /bin/bash
@@ -213,11 +213,11 @@ services:
 
 ## Next Step
 
-Previous: `/schema`. After done → run `/ingest` to implement the Bronze ingestion layer.
+Previous: `/schema`. After done â†’ run `/ingest` to implement the Bronze ingestion layer.
 
 ## References
 
-- Template: `skills/env/assets/docker-compose-base.yml` — ready-to-customize template
+- Template: `skills/env/assets/docker-compose-base.yml` â€” ready-to-customize template
 - Phase deep-dive: `phases/phase-3-environment-setup.md`
 - Previous skill: `skills/schema/SKILL.md`
 - Next skill: `skills/ingest/SKILL.md`

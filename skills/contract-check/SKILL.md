@@ -1,4 +1,4 @@
----
+﻿---
 name: de-contract-check
 description: "Validate actual pipeline output against source data contracts to detect schema drift, SLA violations, and field-level deviations. Use when the user asks 'validate my contracts', 'check schema drift', 'verify data matches contracts', 'contract compliance check', 'has my source schema changed', or 'detect breaking changes in my API'."
 ---
@@ -7,7 +7,7 @@ description: "Validate actual pipeline output against source data contracts to d
 
 ## Purpose
 
-Automatically verify that **actual running data** matches the **source contracts** (`contracts/*.yaml`). When a source changes schema or violates an SLA, detect it immediately — don't let the contract go stale while the code has already diverged.
+Automatically verify that **actual running data** matches the **source contracts** (`contracts/*.yaml`). When a source changes schema or violates an SLA, detect it immediately â€” don't let the contract go stale while the code has already diverged.
 
 - **Testing** (`/test`) = "Does transformation logic behave correctly?"
 - **DQ** (`/dq`) = "Is today's data within expected bounds?"
@@ -19,34 +19,34 @@ Done when every source contract is auto-verified after each ingestion run, and r
 
 ## Steps
 
-### Step 1 — Load contracts
+### Step 1 â€” Load contracts
 
 Read all `contracts/source-*.yaml`. Each contract has:
 
-- `schema.properties` → expected fields + types
-- `sla.freshness` → max allowed data age
-- `quality.checks` → committed checks
+- `schema.properties` â†’ expected fields + types
+- `sla.freshness` â†’ max allowed data age
+- `quality.checks` â†’ committed checks
 
-### Step 2 — Compare against actual data
+### Step 2 â€” Compare against actual data
 
 For each contract:
 
-1. **Schema check**: Actual columns vs expected columns → detect added/removed/renamed
+1. **Schema check**: Actual columns vs expected columns â†’ detect added/removed/renamed
 2. **Type check**: Actual types vs expected types
 3. **Freshness check**: Latest `_loaded_at` vs SLA
 4. **Quality checks**: Row count > 0, PK not null, etc.
 
-### Step 3 — Report with clear diffs
+### Step 3 â€” Report with clear diffs
 
-A failure report must show **exactly** which fields differ and how — not just "contract violated."
+A failure report must show **exactly** which fields differ and how â€” not just "contract violated."
 
-## Output format
+## Output
 
 Create `quality/contract_check.py`:
 
 ```python
 """
-quality/contract_check.py — Validate actual data vs source contracts.
+quality/contract_check.py â€” Validate actual data vs source contracts.
 
 Run after each ingestion to enforce contracts.
 """
@@ -91,7 +91,7 @@ def get_actual_schema(conn, table_name: str) -> dict[str, str]:
 
 
 def normalize_type(yaml_type: str) -> str:
-    """Map YAML types → SQL types for comparison."""
+    """Map YAML types â†’ SQL types for comparison."""
     mapping = {
         "string": "VARCHAR",
         "integer": "INTEGER",
@@ -184,7 +184,7 @@ def validate_all_contracts(conn, contracts_dir: str = "contracts",
         source_name = contract["metadata"]["name"]
         table = (table_mapping or {}).get(source_name, f"raw_{source_name.replace('-', '_')}")
 
-        logger.info(f"Checking contract: {source_name} → {table}")
+        logger.info(f"Checking contract: {source_name} â†’ {table}")
 
         try:
             actual_schema = get_actual_schema(conn, table)
@@ -231,14 +231,14 @@ if __name__ == "__main__":
 ## DONE WHEN
 
 - [ ] Every `contracts/source-*.yaml` is auto-validated after each ingestion run
-- [ ] Schema drift (added/removed/renamed columns) → detected and logged with diff
-- [ ] Type mismatches → detected
-- [ ] Freshness SLA violations → detected
+- [ ] Schema drift (added/removed/renamed columns) â†’ detected and logged with diff
+- [ ] Type mismatches â†’ detected
+- [ ] Freshness SLA violations â†’ detected
 - [ ] `docs/contract_check_report.json` generated after each run with clear pass/fail
 
 ## Next Step
 
-Previous: `/dq`. After done → run `/dag` to wire everything into an orchestrated workflow.
+Previous: `/dq`. After done â†’ run `/dag` to wire everything into an orchestrated workflow.
 
 ## References
 

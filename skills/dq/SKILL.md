@@ -1,58 +1,57 @@
----
+﻿---
 name: de-dq
-description: "Implement runtime data quality monitoring on actual pipeline output — freshness, volume, schema drift, and distribution checks. Use when the user asks 'check my data quality', 'set up DQ monitoring', 'freshness checks', 'volume anomaly detection', 'schema drift alerts', or 'monitor my pipeline data'. For testing transformation logic at code-change time, use /test."
+description: "Implement runtime data quality monitoring on actual pipeline output â€” freshness, volume, schema drift, and distribution checks. Use when the user asks 'check my data quality', 'set up DQ monitoring', 'freshness checks', 'volume anomaly detection', 'schema drift alerts', or 'monitor my pipeline data'. For testing transformation logic at code-change time, use /test."
 ---
 
 # Skill: Data Quality Checks (Runtime)
 
 ## Purpose
 
-Validate **actual data at runtime** — distinct from `/test`, which validates transformation **logic at code-change time**. Even correct code can produce bad data if a source changes, data lags, or upstream anomalies occur.
+Validate **actual data at runtime** â€” distinct from `/test`, which validates transformation **logic at code-change time**. Even correct code can produce bad data if a source changes, data lags, or upstream anomalies occur.
 
-- **Testing** = "Does this SQL do what I think it does?"
-- **DQ** = "Is today's data within expected bounds?"
+See `/test` for the canonical Testing vs. DQ distinction.
 
 ## When to stop at this skill
 
-Done when checks exist for freshness, volume, schema drift, and distribution — each threshold justified by domain knowledge or a documented source contract, not guesswork.
+Done when checks exist for freshness, volume, schema drift, and distribution â€” each threshold justified by domain knowledge or a documented source contract, not guesswork.
 
 ## Steps
 
-### Step 1 — Identify the 4 required check types
+### Step 1 â€” Identify the 4 required check types
 
 | Type | Question | Threshold source |
 |------|----------|-----------------|
-| **Freshness** | Is the latest data within the SLA window? | `contracts/source-<name>.yaml` → `sla.freshness` |
+| **Freshness** | Is the latest data within the SLA window? | `contracts/source-<name>.yaml` â†’ `sla.freshness` |
 | **Volume** | Is the row count within normal range? | Historical data: min/max from last 30 days |
-| **Schema drift** | Did the source add/remove/rename fields? | `contracts/source-<name>.yaml` → schema |
-| **Distribution** | Are values within a valid domain range? | Domain knowledge — not AI guesswork |
+| **Schema drift** | Did the source add/remove/rename fields? | `contracts/source-<name>.yaml` â†’ schema |
+| **Distribution** | Are values within a valid domain range? | Domain knowledge â€” not AI guesswork |
 
-### Step 2 — Calibrate thresholds from domain knowledge
+### Step 2 â€” Calibrate thresholds from domain knowledge
 
-**Do not let AI set thresholds** — AI can suggest, but the user must verify and justify. For example:
+**Do not let AI set thresholds** â€” AI can suggest, but the user must verify and justify. For example:
 
 - `volume_min`: Look at 30-day history, find the lowest day's record count. Subtract a 20% buffer.
 - `price_range`: Can a stock price go to $0? Can it exceed $10,000? Domain knowledge.
-- `freshness`: From contract SLA — if the source updates daily, freshness > 25h triggers alert.
+- `freshness`: From contract SLA â€” if the source updates daily, freshness > 25h triggers alert.
 
-### Step 3 — Write checks and alerts
+### Step 3 â€” Write checks and alerts
 
 Each check must:
 
 - Return **clear pass/fail** (not just a log message).
-- On fail → **alert immediately** (log level ERROR + notification).
+- On fail â†’ **alert immediately** (log level ERROR + notification).
 - Record observed vs expected values for easy debugging.
 
-## Output format
+## Output
 
 Create `quality/dq_checks.py`:
 
 ```python
 """
-quality/dq_checks.py — Runtime data quality monitoring.
+quality/dq_checks.py â€” Runtime data quality monitoring.
 
 Run after each pipeline run to validate data output.
-Each check: pass → log INFO; fail → log ERROR + alert.
+Each check: pass â†’ log INFO; fail â†’ log ERROR + alert.
 """
 
 import json
@@ -64,7 +63,7 @@ from typing import Callable
 logger = logging.getLogger("dq-checks")
 
 
-# ─── Check framework ─────────────────────────────────────────────────────────
+# â”€â”€â”€ Check framework â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 class DQResult:
     def __init__(self, check_name: str, passed: bool, observed: any,
@@ -99,12 +98,12 @@ def run_check(name: str, table: str, fn: Callable, expected_desc: str,
 
 
 def send_alert(result: DQResult):
-    """Send alert — customize with Slack webhook, email, etc."""
+    """Send alert â€” customize with Slack webhook, email, etc."""
     # TODO: Replace with real notification (Slack, PagerDuty, etc.)
     logger.critical(f"DQ ALERT: {result}")
 
 
-# ─── Freshness checks ─────────────────────────────────────────────────────────
+# â”€â”€â”€ Freshness checks â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 def check_freshness(conn, table: str, timestamp_col: str, max_age_hours: int) -> DQResult:
     """Is the data within the SLA window?"""
@@ -128,7 +127,7 @@ def check_freshness(conn, table: str, timestamp_col: str, max_age_hours: int) ->
     )
 
 
-# ─── Volume checks ────────────────────────────────────────────────────────────
+# â”€â”€â”€ Volume checks â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 def check_volume(conn, table: str, partition_col: str, partition_value: str,
                  min_rows: int, max_rows: int) -> DQResult:
@@ -149,7 +148,7 @@ def check_volume(conn, table: str, partition_col: str, partition_value: str,
     )
 
 
-# ─── Schema drift check ───────────────────────────────────────────────────────
+# â”€â”€â”€ Schema drift check â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 def check_schema_drift(conn, table: str, expected_columns: list[str]) -> DQResult:
     """Has the source added/removed/renamed a column?"""
@@ -171,7 +170,7 @@ def check_schema_drift(conn, table: str, expected_columns: list[str]) -> DQResul
     )
 
 
-# ─── Distribution checks ──────────────────────────────────────────────────────
+# â”€â”€â”€ Distribution checks â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 def check_column_range(conn, table: str, column: str,
                        min_val: float, max_val: float) -> DQResult:
@@ -195,7 +194,7 @@ def check_column_range(conn, table: str, column: str,
     )
 
 
-# ─── Run all checks ───────────────────────────────────────────────────────────
+# â”€â”€â”€ Run all checks â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 def run_all_checks(conn, run_date: str = None) -> dict:
     if not run_date:
@@ -203,13 +202,13 @@ def run_all_checks(conn, run_date: str = None) -> dict:
 
     results = []
 
-    # Freshness checks — thresholds from contracts/
+    # Freshness checks â€” thresholds from contracts/
     results.append(check_freshness(
         conn, table="fct_candles", timestamp_col="_loaded_at",
-        max_age_hours=25  # Daily source → alert if >25h (25h = weekend buffer)
+        max_age_hours=25  # Daily source â†’ alert if >25h (25h = weekend buffer)
     ))
 
-    # Volume checks — thresholds from historical data
+    # Volume checks â€” thresholds from historical data
     results.append(check_volume(
         conn, table="fct_candles",
         partition_col="trade_date", partition_value=run_date,
@@ -217,13 +216,13 @@ def run_all_checks(conn, run_date: str = None) -> dict:
         max_rows=12000,  # Upper cap to detect data duplication
     ))
 
-    # Schema drift — from contract schema
+    # Schema drift â€” from contract schema
     results.append(check_schema_drift(
         conn, table="fct_candles",
         expected_columns=["candle_id", "company_id", "time_id", "open", "high", "low", "close", "volume"]
     ))
 
-    # Distribution — domain knowledge
+    # Distribution â€” domain knowledge
     results.append(check_column_range(
         conn, table="fct_candles",
         column="close", min_val=0.01, max_val=100000  # Stock price: $0.01 - $100k
@@ -255,12 +254,12 @@ if __name__ == "__main__":
 - [ ] Volume check exists with min/max from historical data (not arbitrary numbers)
 - [ ] Schema drift check compares against contract schema
 - [ ] Distribution check for important numeric columns with range from domain knowledge
-- [ ] Every failed check → log ERROR and trigger alert
+- [ ] Every failed check â†’ log ERROR and trigger alert
 - [ ] `docs/dq_report.md` has check results with threshold rationale
 
 ## Next Step
 
-Previous: `/test`. After done → run `/contract-check` to validate actual pipeline data against source contracts.
+Previous: `/test`. After done â†’ run `/contract-check` to validate actual pipeline data against source contracts.
 
 ## References
 
