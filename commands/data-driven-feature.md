@@ -5,6 +5,8 @@ argument-hint: "<feature description> [--experiment-type ab|multivariate|bandit]
 
 # Data-Driven Feature Development Orchestrator
 
+> **Scope note:** This is an **extension command**, not part of the 14-skill DESKILL DE pipeline chain (`/problem → /docs`). It orchestrates product feature experimentation (A/B testing, ML model rollouts) and may consume outputs from a DESKILL-built pipeline (Gold tables, serving API). Use it after `/docs` when the pipeline feeds a feature experimentation workflow.
+
 ## CRITICAL BEHAVIORAL RULES
 
 1. **Execute steps in order.** Do NOT skip ahead, reorder, or merge steps.

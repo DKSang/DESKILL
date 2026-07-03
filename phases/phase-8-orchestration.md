@@ -18,6 +18,10 @@ A single end-to-end workflow that runs successfully on trigger or schedule, cove
 ## Feedback loop triggers
 If orchestrating the full pipeline surfaces timing conflicts between sources with different update cadences that weren't accounted for in Phase 1/2, update those documents rather than patching around it silently in the DAG.
 
+## DESKILL Skills
+This phase is implemented by:
+- `/dag` → `skills/dag/SKILL.md` — builds orchestration DAG with dependencies, retry, scheduling, alerts
+
 ## Implementation patterns
 - `implementation/orchestration/airflow-patterns.md` — complete Airflow patterns:
   - TaskFlow API for clean DAGs

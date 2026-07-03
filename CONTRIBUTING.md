@@ -12,7 +12,7 @@ Thanks for your interest! This repo is a community-driven data engineering skill
 - Fork the repo
 - Create a feature branch
 - Make your changes
-- Run quality checks: `node tools/validate-skills.js`
+- Run quality checks: `python tools/validate.py`
 - Submit a PR
 
 ### 3. Content guidelines
@@ -34,4 +34,9 @@ Thanks for your interest! This repo is a community-driven data engineering skill
 - Add example values
 
 ### 4. Code of conduct
-Be respectful, constructive, and assume good faith. See `CODE_OF_CONDUCT.md`.
+Be respectful, constructive, and assume good faith.
+
+### 5. Verification before PR
+- `python tools/validate.py` must pass (frontmatter, encoding, version sync, skill-graph, references)
+- `python tools/test-skills.py` should pass for any skill you modified (baseline compliance check)
+- All YAML templates must parse: `python -c "import yaml,glob; [yaml.safe_load(open(f,encoding='utf-8')) for f in glob.glob('skills/**/*.y*ml',recursive=True)]"`

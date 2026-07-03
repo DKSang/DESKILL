@@ -18,40 +18,26 @@
 - `skills/skill-graph.json` — machine-readable skill dependency graph (skill → next/prev/phase/deliverable)
 - `skills/deliverables.csv` — skill→deliverable→phase manifest for tooling and verification
 - `tools/validate.py` — repo integrity validator (frontmatter, version sync, reference resolution, graph cycles)
+- `tools/test-skills.py` — baseline compliance testing for discipline skills (TDD for skills)
+- `references/anti-patterns.md` — 24 cataloged DE anti-patterns with skill cross-references
+- `AGENTS.md` — AI agent conventions, lint/typecheck/test commands
 
 ### Changed
 - CLI installer no longer offers dead `templates`/`references`/`assets` components; generated `CLAUDE.md` and Copilot instructions reference the 14 real skills instead of the removed lifecycle commands
 - `serve` skill references corrected (no longer mislabels persona/command files as pattern references)
+- Root `SKILL.md` description trimmed to 387 chars (SDO-compliant, when-to-use only)
+- `env` skill: added prod warning for demo `admin/admin` Airflow credentials
+- `data-driven-feature` command: marked as extension outside the 14-skill chain
+- `CONTRIBUTING.md`: fixed dead `validate-skills.js` reference → `validate.py`
 
 ## [2.0.0] — 2026-07-01
 
 ### Added
-- Lifecycle commands: `/spec`, `/plan`, `/build`, `/validate`, `/review`, `/ship`
-- YAML templates: `source-contract.yaml`, `backfill-plan.yaml`, `release-gate.yaml`
-- Anti-patterns reference: `references/anti-patterns.md`
-- npm packaging with CLI installer: `npx deskill install`
-- GitHub CI/CD workflows: quality checks + publish
-- Licensed under MIT
-
-### Merged
-- Implementation patterns from wshobson/agents (Airflow, dbt, Spark, Great Expectations)
-- AI agent personas (data-engineer, backend-architect)
-- Orchestrator commands (data-pipeline, data-driven-feature)
-- Plugin packaging (plugin.json, .claude-plugin/)
-
-### Changed
-- SKILL.md restructured with dual-path navigation (lifecycle commands + phase-based)
-- Phase files updated with implementation reference links
-- Directory structure reorganized with `phases/` + `implementation/` + `commands/` + `templates/`
-
-### Legacy
-- Original 10-phase methodology preserved in `phases/` and `references/`
-- Original templates preserved in `assets/`
-
-## [1.0.0] — 2026-06-01
-
-### Added
 - Initial 10-phase data engineering project roadmap
-- Business problem and data contract templates
+- Business problem and data contract templates (now in `skills/*/assets/`)
 - Tool-agnostic, domain-agnostic framework
 - AI pair-engineering integration at every phase
+
+### Legacy
+- Original 10-phase methodology preserved in `phases/`
+- Original templates preserved in `skills/*/assets/` (per-skill, not a central `templates/` dir)

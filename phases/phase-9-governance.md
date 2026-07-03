@@ -19,6 +19,11 @@ A repository that a reviewer (or future employer) can understand, run, and trust
 ## Feedback loop triggers
 If writing the README surfaces an architecture decision that's hard to justify in writing, that's a signal the decision itself (Phase 2) may need revisiting — clear documentation often exposes fuzzy thinking that was easy to skip past while building.
 
+## DESKILL Skills
+This phase is implemented by:
+- `/ci` → `skills/ci/SKILL.md` — sets up CI/CD (GitHub Actions) to run tests automatically
+- `/docs` → `skills/docs/SKILL.md` — writes README, data lineage, cost analysis
+
 ## Implementation patterns
 - `implementation/transformation/dbt-patterns.md` — `dbt docs generate` for automated data lineage and model documentation
 - `implementation/quality/data-quality-patterns.md` — data contract YAML specification for governance

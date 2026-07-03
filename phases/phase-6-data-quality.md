@@ -19,6 +19,11 @@ A small report or dashboard showing data quality status over time, plus a docume
 ## Feedback loop triggers
 If quality checks keep failing on legitimate data (false positives), the thresholds — not the data — are usually wrong; revisit them with real historical data rather than loosening them arbitrarily.
 
+## DESKILL Skills
+This phase is implemented by:
+- `/dq` → `skills/dq/SKILL.md` — runtime DQ checks (freshness, volume, schema drift, distribution)
+- `/contract-check` → `skills/contract-check/SKILL.md` — validates actual data vs source contracts
+
 ## Implementation patterns
 - `implementation/quality/data-quality-patterns.md` — complete quality framework with:
   - Great Expectations suites (schema, PK, FK, categorical, numeric, date, freshness, row count, statistical)

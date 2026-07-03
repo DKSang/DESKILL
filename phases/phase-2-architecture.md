@@ -29,6 +29,11 @@ Prefer boring, well-documented tools for a portfolio project over exotic ones �
 ## Feedback loop triggers
 Revisit if Phase 4/5 reveal the chosen transformation tool can't handle the actual data volume or shape, or if a source's format (Phase 1) doesn't fit cleanly into the planned Bronze layer contract.
 
+## DESKILL Skills
+This phase is implemented by:
+- `/arch` → `skills/arch/SKILL.md` — designs pipeline architecture, picks 1 tool per category
+- `/schema` → `skills/schema/SKILL.md` — designs DW schema (Fact/Dim tables, grain)
+
 ## Implementation patterns
 - `implementation/pipeline/pipeline-patterns.md` — architecture patterns (ETL/ELT/Lambda/Kappa/Lakehouse)
 - `implementation/orchestration/airflow-patterns.md` — if Airflow is the chosen orchestrator

@@ -23,6 +23,11 @@ Final analytics-ready table(s) matching the grain and columns the Phase 0 questi
 ## Feedback loop triggers
 If a transformation can't produce what an analytical question (Phase 0) needs even with correct logic — because the necessary granularity or field simply isn't in the source — that's a Phase 0/1 problem, not something to force-fix here.
 
+## DESKILL Skills
+This phase is implemented by:
+- `/transform` → `skills/transform/SKILL.md` — builds Silver (cleaned) and Gold (analytics-ready) models
+- `/test` → `skills/test/SKILL.md` — writes schema + logic test suite (validates logic at code-change time)
+
 ## Implementation patterns
 - `implementation/transformation/dbt-patterns.md` — complete dbt patterns: staging models, intermediate models, mart models (dimensions + facts), incremental strategies, macros
 - `implementation/optimization/spark-patterns.md` — Spark transformation patterns if using distributed compute

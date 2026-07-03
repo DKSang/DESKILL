@@ -141,6 +141,13 @@ def check_skill_graph() -> None:
         for fb in n.get("feedbackTo", []) or []:
             if fb not in by_id:
                 err(f"skill-graph: {n['id']}.feedbackTo unknown skill: {fb}")
+    # top-level references and tools paths
+    for rel in data.get("references", []) or []:
+        if not (ROOT / rel).exists():
+            err(f"skill-graph: references path missing: {rel}")
+    for rel in data.get("tools", []) or []:
+        if not (ROOT / rel).exists():
+            err(f"skill-graph: tools path missing: {rel}")
     print(f"OK  skill-graph: {len(nodes)} nodes, chain intact")
 
 
@@ -163,6 +170,22 @@ def check_phases() -> None:
     for i in range(10):
         if not list((ROOT / "phases").glob(f"phase-{i}-*.md")):
             err(f"phases/phase-{i}-*.md: missing")
+    # check phase files have DESKILL Skills back-links
+    for pf in sorted((ROOT / "phases").glob("phase-*.md")):
+        text = pf.read_text(encoding="utf-8")
+        if "## DESKILL Skills" not in text:
+            warn(f"{pf.relative_to(ROOT)}: missing '## DESKILL Skills' back-link section")
+
+
+# ─── 7. references ────────────────────────────────────────────────────────────
+def check_references() -> None:
+    ap = ROOT / "references/anti-patterns.md"
+    if not ap.exists():
+        err("references/anti-patterns.md: missing")
+        return
+    text = ap.read_text(encoding="utf-8")
+    if "AP-24:" not in text:
+        err("references/anti-patterns.md: incomplete (missing AP-24 or later)")
 
 
 # ─── main ─────────────────────────────────────────────────────────────────────
@@ -182,6 +205,7 @@ def main() -> int:
     check_skill_graph()
     check_marketplace()
     check_phases()
+    check_references()
 
     # also validate deliverables.csv parses
     csvp = ROOT / "skills/deliverables.csv"

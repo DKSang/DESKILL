@@ -12,7 +12,7 @@ Go beyond "find an API" — establish, in writing, exactly what can be relied on
 6. If multiple sources need to be joined later, check they share (or can be mapped to) a common key (e.g. a shared entity ID, geography code, or timestamp granularity) — this is often discovered too late.
 
 ## Output
-One data contract entry per source in `docs/data_contracts.md` (use `assets/data_contract_template.md`), each with: access method, auth, schema (with real sample), update frequency, rate limit + volume math, breaking-change risk, and shared-key compatibility notes.
+One data contract per source: `contracts/source-<name>.yaml` using `skills/sources/assets/source_contract_template.yaml`, each with: access method, auth, schema (with real sample), update frequency, rate limit + volume math, breaking-change risk, and shared-key compatibility notes.
 
 ## Tool-selection guidance
 No single tool is "correct" here — the deliverable is a document, not code. A small verification script (any language) that calls each source once and prints the real response is worth writing before committing to the contract.
@@ -26,7 +26,13 @@ No single tool is "correct" here — the deliverable is a document, not code. A 
 Revisit Phase 0 if a source can't deliver what a key analytical question needs (missing field, wrong granularity, insufficient history).
 Revisit this file immediately if Phase 4 ingestion reveals the real response differs from what was documented here — don't let the contract go stale.
 
+## DESKILL Skills
+This phase is implemented by:
+- `/sources` → `skills/sources/SKILL.md` — evaluates data sources, produces `contracts/source-*.yaml`
+- `/contract-check` → `skills/contract-check/SKILL.md` — validates actual data against contracts (runtime enforcement)
+
 ## Implementation patterns
-- `assets/data_contract_template.md` — fill-in-the-blank template for each source
+- `skills/sources/assets/source_contract_template.yaml` — fill-in-the-blank YAML template for each source
+- `skills/sources/scripts/probe_source.py` — live-test a source and print the real schema
 - `implementation/quality/data-quality-patterns.md` — data contract YAML specification (Pattern 5) for structured contract definitions
 - `implementation/pipeline/pipeline-patterns.md` — ingestion patterns that depend on accurate source contracts

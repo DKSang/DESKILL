@@ -139,5 +139,13 @@
     "phase-3-environment-setup", "phase-4-ingestion",
     "phase-5-transformation-testing", "phase-6-data-quality",
     "phase-7-serving", "phase-8-orchestration", "phase-9-governance"
+  ],
+  "references": [
+    "references/anti-patterns.md"
+  ],
+  "tools": [
+    "tools/validate.py",
+    "tools/test-skills.py",
+    "tools/installer/cli.js"
   ]
 }

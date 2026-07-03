@@ -1,6 +1,6 @@
 ---
 name: de-project-roadmap
-description: "End-to-end framework for planning and building a data engineering project — from business problem to production-ready pipeline. Use whenever the user is working on ANY data engineering project, pipeline, ETL/ELT system, data platform, or data warehouse — in any domain. Trigger on: 'build a data pipeline', 'DE portfolio project', 'data engineering project structure', 'where do I start with my DE project', 'roadmap for building X pipeline', 'plan my data engineering project', 'I have a business problem and need a data pipeline', or when the user is stuck mid-project and doesn't know what to do next. Skip only for pure data-analysis questions with no pipeline work involved."
+description: "Use when working on any data engineering project, pipeline, ETL/ELT system, data platform, or data warehouse — from business problem to production-ready pipeline. Covers planning, source contracts, architecture, schema design, ingestion, transformation, testing, data quality, orchestration, serving, CI/CD, and documentation. Skip for pure data-analysis questions with no pipeline work."
 ---
 
 # Data Engineering Project Roadmap

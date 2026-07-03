@@ -11,7 +11,7 @@ Establish who consumes this data, what decision it enables, and how success will
 5. Note constraints up front: budget (usually $0 for portfolio projects), time available, and any domain knowledge gaps you'll need to fill.
 
 ## Output
-`docs/business_problem.md` using `assets/business_problem_template.md` — problem statement, personas, the analytical questions, success metrics, constraints.
+`docs/business_problem.md` using `skills/problem/assets/business_problem_template.md` — problem statement, personas, the analytical questions, success metrics, constraints.
 
 ## Common failure mode
 Jumping straight to "which tools should I use" without this phase produces a pipeline that runs cleanly but doesn't answer anything anyone needed — a very common trap for portfolio projects built backwards from "I want to learn tool X."
@@ -26,6 +26,11 @@ Revisit this file when:
 - Phase 1 reveals that no free/available source can answer one of the analytical questions (cut or revise the question, don't force it).
 - Phase 4 or 5 reveals the real data can't support the question at the granularity assumed (e.g. data is monthly, question needs daily).
 
+## DESKILL Skills
+This phase is implemented by:
+- `/problem` → `skills/problem/SKILL.md` — defines business problem, persona, analytical questions
+- `/sources` → `skills/sources/SKILL.md` — evaluates data sources and creates contracts (crosses into Phase 1)
+
 ## Implementation patterns
 - `implementation/pipeline/pipeline-patterns.md` — end-to-end architecture design patterns once scope is defined
-- `assets/business_problem_template.md` — fill-in-the-blank template for this phase's output
+- `skills/problem/assets/business_problem_template.md` — fill-in-the-blank template for this phase's output

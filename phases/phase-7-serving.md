@@ -18,6 +18,10 @@ A working, locally runnable interface (or static export) plus a demo artifact fo
 ## Feedback loop triggers
 If a Phase 0 question can't be cleanly visualized from the Gold table as built, that's a signal to revisit Phase 5's aggregation grain — not a reason to over-engineer the serving layer to compensate.
 
+## DESKILL Skills
+This phase is implemented by:
+- `/serve` → `skills/serve/SKILL.md` — builds dashboard/API, 1 view per analytical question
+
 ## Implementation patterns
 - `agents/backend-architect.md` — API design patterns if building a custom serving API
 - `commands/data-pipeline.md` — architecture documentation section for serving layer design

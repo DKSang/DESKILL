@@ -157,6 +157,9 @@ services:
   airflow-init:
     image: apache/airflow:2.9.0
     entrypoint: /bin/bash
+    # NOTE: admin/admin is a demo-only credential for local dev.
+    # In production: generate via `airflow users create` with a strong password
+    # from a secret manager (Vault, AWS Secrets Manager). Never ship admin/admin.
     command: -c "airflow db init && airflow users create --username admin --password admin --firstname Admin --lastname User --role Admin --email admin@example.com"
     environment:
       <<: *common-env

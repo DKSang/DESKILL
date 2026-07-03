@@ -16,11 +16,15 @@ Raw/Bronze storage populated with real data from every source, covering enough h
 
 ## AI usage tips
 - AI is efficient at generating the repetitive parts: retry/backoff logic, logging boilerplate, and basic response validation.
-- When a source's real response doesn't match what Phase 1 documented, paste the actual error/response to AI for fast diagnosis — but update `data_contracts.md` yourself once resolved.
+- When a source's real response doesn't match what Phase 1 documented, paste the actual error/response to AI for fast diagnosis — but update `contracts/source-<name>.yaml` yourself once resolved.
 
 ## Feedback loop triggers
-This is the phase most likely to reveal that Phase 1's contract was incomplete or wrong (field names differ, pagination undocumented, rate limits stricter in practice). Update Phase 1's document immediately, don't let the discrepancy live only in your memory or in scattered code comments.
+This is the phase most likely to reveal that Phase 1's contract was incomplete or wrong (field names differ, pagination undocumented, rate limits stricter in practice). Update Phase 1's `contracts/source-<name>.yaml` immediately, don't let the discrepancy live only in your memory or in scattered code comments.
 If the full-scope ingestion is infeasible (rate limits, volume, cost), revisit Phase 0's scope before forcing a workaround.
+
+## DESKILL Skills
+This phase is implemented by:
+- `/ingest` → `skills/ingest/SKILL.md` — implements Bronze ingestion with retry, validation, DLQ, metadata tagging
 
 ## Implementation patterns
 - `implementation/pipeline/pipeline-patterns.md` — batch and streaming ingestion patterns with retry logic, dead letter queues, metadata tracking

@@ -20,6 +20,10 @@ A repo that starts with a single command (e.g. `docker compose up`) and reaches 
 ## Feedback loop triggers
 If Phase 4/5 requires a tool/library not accounted for here, update this environment definition immediately rather than installing things ad hoc and losing reproducibility.
 
+## DESKILL Skills
+This phase is implemented by:
+- `/env` → `skills/env/SKILL.md` — creates `docker-compose.yml`, `.env.template`, `requirements.txt`
+
 ## Implementation patterns
 - `implementation/orchestration/airflow-patterns.md` — project structure section for Airflow docker-compose setup
 - `implementation/transformation/dbt-patterns.md` — dbt project initialization and `dbt_project.yml` configuration
