@@ -10,7 +10,7 @@ description: "Validate actual pipeline output against source data contracts to d
 Automatically verify that **actual running data** matches the **source contracts** (`contracts/*.yaml`). When a source changes schema or violates an SLA, detect it immediately â€” don't let the contract go stale while the code has already diverged.
 
 - **Testing** (`/test`) = "Does transformation logic behave correctly?"
-- **DQ** (`/dq`) = "Is today's data within expected bounds?"
+- **DQ** (`/dq`) = "Does today's data fall within expected bounds?"
 - **Contract-check** (`/contract-check`) = "Does the actual data match the committed source contract?"
 
 ## When to stop at this skill
