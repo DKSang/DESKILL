@@ -1,6 +1,6 @@
 ---
 name: de-problem
-description: "Define the business problem, personas, and analytical questions for a data engineering project — the mandatory first step before choosing any tool or writing any code. Use this skill when the user says 'I want to build a pipeline for...', 'my project is about...', 'help me structure my DE project', 'where do I start', 'what should I build first', 'I have this data source and want to...', or describes any domain/data source without yet having a clear problem statement. Also use when the user seems to be jumping straight to tools without a defined problem — redirect them here first."
+description: "Define the business problem, persona, and analytical questions for a data engineering project before choosing tools or writing code. Use when the user says 'I want to build a pipeline for...', 'where do I start', 'what should I build first', or jumps straight to tools without a clear problem statement."
 ---
 
 # Skill: Define Business Problem
@@ -11,9 +11,7 @@ Determine **who needs what, to make what decision** before touching any tools. T
 
 ## When to stop at this skill
 
-Only move to `/sources` when `docs/business_problem.md` has **all 5 sections** listed in DONE WHEN below.
-
----
+Only move to `/sources` when `docs/business_problem.md` has **all 5 sections** listed in DONE WHEN.
 
 ## Steps
 
@@ -31,47 +29,36 @@ If the user doesn't know their persona, ask directly: *"Who is the end consumer 
 | Part | Content |
 |------|---------|
 | **Context** | What are users relying on today without this pipeline? (spreadsheet, nothing, manual process?) |
-| **Problem** | What question/decision is currently hard or impossible to answer, and why? List 1-3 specific pain points. |
+| **Problem** | What question/decision is currently hard or impossible to answer, and why? List 1–3 specific pain points. |
 | **Solution** | What will this pipeline provide — sources, layers, serving output — at a level a non-technical person can understand. |
 
-### Step 3 — Define 3-5 Analytical Questions
+### Step 3 — Define 3–5 Analytical Questions
 
-This is the most important part. Each question must:
-- Be **specific enough to write SQL for today**, even without data yet
-- Have a clear entity, metric, threshold/timeframe
-- Not be vague like "understand trends" — must be like "top 10 [entities] with [metric] change > [X]% in [Y] days"
+Each question must:
+- Be **specific enough to write SQL for today**, even without data yet.
+- Have a clear entity, metric, threshold, and timeframe.
+- Not be vague like "understand trends" — use "top 10 [entities] with [metric] change > [X]% in [Y] days".
 
-**Good examples:**
-- "Which stocks had closing price change > 5% compared to 7-day average in the last 30 days?"
-- "What is the daily trading volume trend per sector over the last quarter?"
-- "Which news topics have the highest correlation with same-day price movements?"
-
-**Bad examples (too vague):**
-- "Understand market trends" (too vague)
-
-- "Analyze stock performance" (too vague)
 If the user gives vague questions, stress-test them: *"If I were to write SQL for this question right now, what would the entity, metric, threshold, and timeframe be?"*
 
 ### Step 4 — Define Success Metric
 
-**NOT**: "Pipeline runs without errors"
+**NOT**: "Pipeline runs without errors".
 
-**MUST BE**: "Correctly answers questions 1-3 with data no older than [X] [hours/days]"
+**MUST BE**: "Correctly answers questions 1–3 with data no older than [X] [hours/days]."
 
-Good example: *"Dashboard shows correct top movers daily with data lag ≤ 1 business day."*
+Example: *"Dashboard shows correct top movers daily with data lag ≤ 1 business day."*
 
 ### Step 5 — Document Constraints
 
 Always be explicit about:
-- **Budget**: $0 or a specific number
-- **Time available**: X hours/week for Y weeks
-- **Domain gaps**: What knowledge needs to be learned
-
----
+- **Budget**: $0 or a specific number.
+- **Time available**: X hours/week for Y weeks.
+- **Domain gaps**: What knowledge needs to be learned.
 
 ## Output format
 
-Create `docs/business_problem.md` using the template below:
+Create `docs/business_problem.md` using the template below. For a fill-in version, see `skills/problem/assets/business_problem_template.md`.
 
 ```markdown
 # Business Problem — [Project Name]
@@ -106,21 +93,23 @@ Create `docs/business_problem.md` using the template below:
 - Domain gaps: [...]
 ```
 
----
-
 ## DONE WHEN
 
 File `docs/business_problem.md` exists and has:
-- [ ] Persona written as "Who at where needs what decision"
-- [ ] Problem statement with 3 parts: Context + Problem + Solution
-- [ ] 3-5 analytical questions specific enough to write SQL
-- [ ] Success metric is NOT "pipeline runs"
-- [ ] Constraints specify budget + time
-
----
+- [ ] Persona written as "Who at where needs what decision".
+- [ ] Problem statement with 3 parts: Context + Problem + Solution.
+- [ ] 3–5 analytical questions specific enough to write SQL.
+- [ ] Success metric is NOT "pipeline runs".
+- [ ] Constraints specify budget + time.
 
 ## Next Step
 
 After done → run `/sources` to evaluate each data source and create contracts.
 
-> Reference: `phases/phase-0-discover.md` for deep-dive methodology.
+If a later phase reveals that no source can answer a question, revisit this skill and revise the question rather than forcing the source.
+
+## References
+
+- Template: `skills/problem/assets/business_problem_template.md`
+- Phase deep-dive: `phases/phase-0-discover.md`
+- Next phase: `phases/phase-1-data-contracts.md`

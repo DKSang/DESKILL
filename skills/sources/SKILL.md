@@ -1,36 +1,37 @@
 ---
 name: de-sources
-description: "Evaluate data sources and produce machine-verifiable source contracts before writing any ingestion code. Use this skill when the user asks 'what data sources should I use', 'how do I document my API', 'is this API reliable enough', 'help me write a data contract', 'I found this API, can I use it?', 'how do I check rate limits', 'how do I validate my source', or has a business problem defined and needs to lock down sources before building. Also use when the user wants to start coding ingestion without first documenting sources — redirect here first."
+description: "Evaluate data sources and produce machine-verifiable source contracts before writing ingestion code. Use when the user asks 'what data sources should I use', 'help me write a data contract', 'is this API reliable enough', or wants to start coding ingestion before documenting sources."
 ---
 
 # Skill: Evaluate Sources & Create Data Contracts
 
 ## Purpose
 
-Before writing a single line of ingestion code, you must know exactly **how much you can trust each source** — what the actual schema is, whether rate limits are sufficient, whether join keys match. This skill produces a data contract — a written commitment, not a bookmark.
+Before writing a single line of ingestion code, know exactly **how much you can trust each source** — what the actual schema is, whether rate limits are sufficient, whether join keys match. This skill produces a data contract per source: a written commitment, not a bookmark.
 
 ## When to stop at this skill
 
-Only move to `/arch` when every source has a `contracts/source-<name>.yaml` file with all 6 fields in DONE WHEN.
-
----
+This skill follows `/problem`. Only move to `/arch` when every source has a `contracts/source-<name>.yaml` file with all 6 fields in DONE WHEN.
 
 ## Steps
 
 ### Step 1 — List candidate sources
 
 From `docs/business_problem.md` (analytical questions), list **every** possible source. For each source, answer:
-- Access method: REST API / bulk file / database / scrape (prefer API or bulk export, avoid scrape)
-- Auth: none / API key / OAuth / service account
-- Cost: $0 or a specific number — if unsure, test before committing
+- Access method: REST API / bulk file / database / scrape (prefer API or bulk export, avoid scrape).
+- Auth: none / API key / OAuth / service account.
+- Cost: $0 or a specific number — if unsure, test before committing.
 
 ### Step 2 — Get the real schema (not from docs)
 
 > **Important**: Documentation is often out of date. You must call the live API and record the schema from the actual response.
 
-Run the probe script (see `scripts/probe_source.py`) or call manually:
+Use the helper script `skills/sources/scripts/probe_source.py` or call manually:
 ```bash
-curl -H "Authorization: Bearer $API_KEY" "https://api.example.com/endpoint?limit=1"
+python skills/sources/scripts/probe_source.py \
+  --url "https://api.example.com/endpoint" \
+  --headers '{"Authorization": "Bearer $API_KEY"}' \
+  --params '{"limit": 1}'
 ```
 
 Paste the response into the contract. This is the real schema — not the schema from docs.
@@ -42,7 +43,7 @@ Never write "should be fine." Calculate concretely:
 ```
 Volume per run = number of entities × number of fields × number of runs/day
 Rate limit = X calls/minute (from docs + real-world verification)
-Margin = Rate limit / Volume per run → must be > 1
+Margin = Rate limit / Volume per run → must be ≥ 1
 ```
 
 Example:
@@ -67,7 +68,7 @@ Each source needs: **when to query, at what frequency?**
 If multiple sources need to be joined, verify clearly:
 - What is the common key? (ticker symbol, product ID, user ID, timestamp grain)
 - Do the keys actually match? (case sensitivity, format differences?)
-- If there's no natural key → a mapping table is needed → document in the contract
+- If there's no natural key → a mapping table is needed → document in the contract.
 
 ### Step 6 — Assess breaking-change risk
 
@@ -77,18 +78,16 @@ If multiple sources need to be joined, verify clearly:
 | **Medium** | Not versioned but official, infrequent changes |
 | **High** | Unofficial / undocumented / scraping |
 
----
-
 ## Output format
 
-Create `contracts/source-<name>.yaml` for each source:
+Create `contracts/source-<name>.yaml` for each source using the template in `skills/sources/assets/source_contract_template.yaml`:
 
 ```yaml
 # contracts/source-<name>.yaml
 apiVersion: datacontract.com/v1.0.0
 kind: DataContract
 metadata:
-  name: <source-name>           # e.g. "polygon-ohlc"
+  name: <source-name>
   version: 1.0.0
   owner: <owner-name>
   lastVerified: <YYYY-MM-DD>    # Date of most recent live call test
@@ -118,7 +117,7 @@ volume:
   callsPerRun: <number>
   math: "<specific calculation>"
   fitsWithinLimit: <true|false>
-  margin: <X>x   # callsPerRun / rateLimit, must be > 1
+  margin: <X>x   # callsPerRun / rateLimit, must be ≥ 1
 
 schema:
   # Schema from LIVE CALL — not from docs
@@ -153,8 +152,6 @@ sla:
   freshness: <max age, e.g. "24h">
 ```
 
----
-
 ## DONE WHEN
 
 For each source, `contracts/source-<name>.yaml` has:
@@ -165,15 +162,17 @@ For each source, `contracts/source-<name>.yaml` has:
 - [ ] `breakingChangeRisk` with reasoning
 - [ ] `lastVerified` is an actual test date
 
----
-
-## Feedback loop
-
-If a source cannot provide a required field for an analytical question → go back to `docs/business_problem.md` and drop or revise that question — **do not force-fix it at ingestion time**.
-
 ## Next Step
 
-After all contracts are done → run `/arch` to design your pipeline architecture and choose your tool stack.
+Previous: `/problem`. After all contracts are done → run `/arch` to design your pipeline architecture and choose your tool stack.
 
-> Scripts: `scripts/probe_source.py` — live-test a source, print actual schema.
-> Reference: `phases/phase-1-data-contracts.md`
+If a source cannot provide a required field for an analytical question, go back to `docs/business_problem.md` and drop or revise that question — **do not force-fix it at ingestion time**.
+
+## References
+
+- Template: `skills/sources/assets/source_contract_template.yaml`
+- Probe script: `skills/sources/scripts/probe_source.py`
+- Previous skill: `skills/problem/SKILL.md`
+- Next skill: `skills/arch/SKILL.md`
+- Phase deep-dives: `phases/phase-0-discover.md`, `phases/phase-1-data-contracts.md`
+- Data quality patterns: `implementation/quality/data-quality-patterns.md`
