@@ -1,6 +1,6 @@
 ---
 name: de-serve
-description: "Build the serving layer so stakeholders can consume the analytics output from the data pipeline. Use this skill when the user says 'build a dashboard', 'create a serving layer', 'visualize my data', 'expose my Gold tables', 'build a BI view', 'make a Streamlit app', 'create an API for my data', 'show my analytical results', or has Gold tables and needs to answer the analytical questions from the business problem in a consumable format."
+description: "Build the serving layer so stakeholders can consume the analytics output from the pipeline. Use when the user says 'build a dashboard', 'create a serving layer', 'visualize my data', 'expose my Gold tables', 'build a BI view', 'make a Streamlit app', 'create an API for my data', 'show my analytical results', or has Gold tables and needs to answer the business questions in a consumable format."
 ---
 
 # Skill: Build Serving Layer
@@ -12,6 +12,8 @@ Turn Gold tables into something **stakeholders can read and make decisions from*
 ## When to stop at this skill
 
 Done when every analytical question has ≥1 working view/chart, and the demo is captured (screenshot or recording).
+
+This skill follows `/dag`. Only move to `/ci` once the dashboard or API runs locally and answers every question.
 
 ---
 
@@ -198,6 +200,16 @@ def get_data(
 
 ## Next Step
 
-After done → run `/ci` to set up CI/CD for automated testing.
+Previous: `/dag`.
 
-> Reference: `phases/phase-7-serving.md`
+After done → run `/ci` to set up automated testing for the pipeline.
+
+If a question cannot be answered cleanly from the Gold table, revisit `/transform` or `/schema` to fix the aggregation grain — don't over-engineer the serving layer to compensate.
+
+---
+
+## References
+
+- Phase deep-dive: `phases/phase-7-serving.md`
+- API design patterns: `agents/backend-architect.md`
+- Architecture guide: `commands/data-pipeline.md`

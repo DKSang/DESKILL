@@ -1,6 +1,6 @@
 ---
 name: de-dag
-description: "Build the orchestration DAG to wire all pipeline tasks (ingestion, transformation, data quality) into a single automated workflow with explicit dependencies, retry policies, and scheduling. Use this skill when the user says 'build my DAG', 'orchestrate my pipeline', 'write Airflow DAG', 'schedule my pipeline', 'connect all tasks', 'automate my pipeline end-to-end', 'set up Prefect/Dagster flow', or has individual ingestion + transform + DQ scripts ready to wire together into a scheduled workflow."
+description: "Build the orchestration DAG that wires ingestion, transformation, and quality tasks into a single scheduled workflow. Use when the user says 'build my DAG', 'orchestrate my pipeline', 'schedule my pipeline', 'connect all tasks', 'write Airflow DAG', 'set up Prefect/Dagster flow', or has individual tasks ready to wire into an end-to-end pipeline."
 ---
 
 # Skill: Build Orchestration DAG
@@ -12,6 +12,8 @@ Connect all built tasks into **1 automated workflow** with explicit dependencies
 ## When to stop at this skill
 
 Done when the full pipeline runs from a trigger, retry policies are in place, the schedule matches the slowest source update, and failures trigger alerts.
+
+This skill follows `/dq` and `/contract-check`. Only move to `/serve` once the DAG runs end-to-end.
 
 ---
 
@@ -240,7 +242,17 @@ def pipeline(run_date: str = None):
 
 ## Next Step
 
-After done → run `/serve` to build your serving layer (dashboard/API).
+Previous: `/dq` and `/contract-check`.
 
-> Reference: `skills/dag/references/dag_patterns.md`
-> `phases/phase-8-orchestration.md`
+After done → run `/serve` to build the serving layer (dashboard/API).
+
+If scheduling reveals a source cadence that conflicts with the contract or architecture, revisit `/sources` or `/arch` rather than patching the DAG silently.
+
+---
+
+## References
+
+- Phase deep-dive: `phases/phase-8-orchestration.md`
+- Orchestration patterns: `implementation/orchestration/airflow-patterns.md`
+- Pipeline patterns: `implementation/pipeline/pipeline-patterns.md`
+- Local reference: `skills/dag/references/dag_patterns.md`

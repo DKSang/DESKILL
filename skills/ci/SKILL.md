@@ -1,6 +1,6 @@
 ---
 name: de-ci
-description: "Set up CI/CD for a data engineering project so tests run automatically on every code change. Use this skill when the user says 'set up CI', 'automate my tests', 'GitHub Actions for data pipeline', 'make tests run on PR', 'continuous integration', 'automate pipeline deployment', 'set up pre-commit hooks', or has a working test suite and wants it to run automatically without manual intervention."
+description: "Set up CI so the test suite runs automatically on every code change. Use when the user says 'set up CI', 'automate my tests', 'GitHub Actions for data pipeline', 'make tests run on PR', 'continuous integration', 'set up pre-commit hooks', or has a working test suite and wants it to run automatically without manual intervention."
 ---
 
 # Skill: Setup CI/CD
@@ -11,7 +11,9 @@ Make the test suite run **automatically on every code change** — no need to re
 
 ## When to stop at this skill
 
-Done when tests run automatically on PRs and the pipeline deploys reproducibly from a fresh clone.
+Done when tests run automatically on PRs and the pipeline runs reproducibly from a fresh clone.
+
+This skill follows `/serve`. Only move to `/docs` once the CI workflow passes on a fresh push.
 
 ---
 
@@ -196,6 +198,14 @@ addopts = -v --tb=short
 
 ## Next Step
 
-After done → run `/docs` to write your project documentation.
+Previous: `/serve`.
 
-> Asset: `skills/ci/assets/github_actions_template.yml`
+After done → run `/docs` to write README, data lineage, and cost analysis.
+
+---
+
+## References
+
+- Phase deep-dive: `phases/phase-9-governance.md`
+- Operations guide: `commands/data-pipeline.md`
+- Template: `skills/ci/assets/github_actions_template.yml`

@@ -1,6 +1,6 @@
 ---
 name: de-docs
-description: "Write project documentation including README, data lineage, and cost analysis for a data engineering project. Use this skill when the user says 'write my README', 'document my pipeline', 'generate data lineage', 'what would this cost in production', 'write project docs', 'prepare for portfolio review', 'write a handoff document', or has a working pipeline ready to document for sharing, portfolio, or team handoff."
+description: "Write project documentation including README, data lineage, and cost analysis for a data engineering project. Use when the user says 'write my README', 'document my pipeline', 'generate data lineage', 'what would this cost in production', 'write project docs', 'prepare for portfolio review', 'write a handoff document', or has a working pipeline ready to document for sharing, portfolio, or team handoff."
 ---
 
 # Skill: Write Documentation
@@ -12,6 +12,8 @@ Make the project **understandable and runnable** by someone else — portfolio r
 ## When to stop at this skill
 
 Done when the README is sufficient to clone + run + understand in 10 minutes, data lineage exists, and cost notes are included.
+
+This skill follows `/ci`. The pipeline is complete once README, lineage, and cost analysis are committed.
 
 ---
 
@@ -181,6 +183,17 @@ At 10x scale (~<X*10> MB/day): **~$<Y*10>/month** — would consider <optimizati
 
 ## Next Step
 
-**Project complete!** Your data engineering pipeline is fully built, tested, documented, and ready for portfolio review or production use.
-```
+Previous: `/ci`.
 
+**Project complete!** Your data engineering pipeline is fully built, tested, documented, and ready for portfolio review or production use.
+
+If writing the README exposes an unclear architecture decision, revisit `/arch` rather than hand-waving in the docs.
+
+---
+
+## References
+
+- Phase deep-dive: `phases/phase-9-governance.md`
+- dbt lineage docs: `implementation/transformation/dbt-patterns.md`
+- Data contracts: `implementation/quality/data-quality-patterns.md`
+- Operations guide: `commands/data-pipeline.md`
