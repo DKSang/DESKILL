@@ -43,7 +43,7 @@ Never write "should be fine." Calculate concretely:
 ```
 Volume per run = number of entities × number of fields × number of runs/day
 Rate limit = X calls/minute (from docs + real-world verification)
-Margin = Rate limit / Volume per run → must be ≥ 1
+Margin = Rate limit / Volume per run → must be > 1
 ```
 
 Example:
@@ -117,7 +117,7 @@ volume:
   callsPerRun: <number>
   math: "<specific calculation>"
   fitsWithinLimit: <true|false>
-  margin: <X>x   # callsPerRun / rateLimit, must be ≥ 1
+  margin: <X>x   # limit / callsPerRun, must be > 1
 
 schema:
   # Schema from LIVE CALL — not from docs
