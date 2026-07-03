@@ -1,21 +1,20 @@
 ---
 name: de-dq
-description: "Implement runtime data quality monitoring to validate actual data produced by the pipeline — freshness, volume, schema drift, and distribution checks. Use this skill when the user asks 'check my data quality', 'set up DQ monitoring', 'freshness checks', 'volume anomaly detection', 'schema drift alerts', 'how do I know if my data is good', 'monitor my pipeline data', or has a working pipeline and needs runtime validation. Note: for testing transformation logic, use /test. This skill is for runtime data monitoring."
+description: "Implement runtime data quality monitoring on actual pipeline output — freshness, volume, schema drift, and distribution checks. Use when the user asks 'check my data quality', 'set up DQ monitoring', 'freshness checks', 'volume anomaly detection', 'schema drift alerts', or 'monitor my pipeline data'. For testing transformation logic at code-change time, use /test."
 ---
 
 # Skill: Data Quality Checks (Runtime)
 
 ## Purpose
 
-Validate **actual data at runtime** — distinct from `/test` which validates logic at code-change time. Even if the code logic is correct, data can still be wrong if the source changes, data lags, or anomalies occur.
+Validate **actual data at runtime** — distinct from `/test`, which validates transformation **logic at code-change time**. Even correct code can produce bad data if a source changes, data lags, or upstream anomalies occur.
 
-**DQ = "Is today's data within expected bounds?"**
+- **Testing** = "Does this SQL do what I think it does?"
+- **DQ** = "Is today's data within expected bounds?"
 
 ## When to stop at this skill
 
-Done when checks exist for freshness, volume, schema drift, and distribution — each threshold justified by domain knowledge, not guesswork.
-
----
+Done when checks exist for freshness, volume, schema drift, and distribution — each threshold justified by domain knowledge or a documented source contract, not guesswork.
 
 ## Steps
 
@@ -24,28 +23,27 @@ Done when checks exist for freshness, volume, schema drift, and distribution —
 | Type | Question | Threshold source |
 |------|----------|-----------------|
 | **Freshness** | Is the latest data within the SLA window? | `contracts/source-<name>.yaml` → `sla.freshness` |
-| **Volume** | Is the row count within normal range? | Historical data: min/max/std from last 30 days |
+| **Volume** | Is the row count within normal range? | Historical data: min/max from last 30 days |
 | **Schema drift** | Did the source add/remove/rename fields? | `contracts/source-<name>.yaml` → schema |
-| **Distribution** | Are values within valid range? | Domain knowledge — not AI guesswork |
+| **Distribution** | Are values within a valid domain range? | Domain knowledge — not AI guesswork |
 
 ### Step 2 — Calibrate thresholds from domain knowledge
 
 **Do not let AI set thresholds** — AI can suggest, but the user must verify and justify. For example:
 
-- `volume_min`: Look at 30-day history, find the lowest day's record count. Subtract 20% buffer.
+- `volume_min`: Look at 30-day history, find the lowest day's record count. Subtract a 20% buffer.
 - `price_range`: Can a stock price go to $0? Can it exceed $10,000? Domain knowledge.
-- `freshness`: From contract SLA — if source updates daily, freshness > 25h triggers alert.
+- `freshness`: From contract SLA — if the source updates daily, freshness > 25h triggers alert.
 
 ### Step 3 — Write checks and alerts
 
 Each check must:
-- Return **clear pass/fail** (not just a log message)
-- On fail → **alert immediately** (log level ERROR + notification)
-- Record observed vs expected values for easy debugging
 
----
+- Return **clear pass/fail** (not just a log message).
+- On fail → **alert immediately** (log level ERROR + notification).
+- Record observed vs expected values for easy debugging.
 
-## Output
+## Output format
 
 Create `quality/dq_checks.py`:
 
@@ -251,8 +249,6 @@ if __name__ == "__main__":
     print(json.dumps(results, indent=2))
 ```
 
----
-
 ## DONE WHEN
 
 - [ ] Freshness check exists for every table with threshold from contract SLA
@@ -262,11 +258,14 @@ if __name__ == "__main__":
 - [ ] Every failed check → log ERROR and trigger alert
 - [ ] `docs/dq_report.md` has check results with threshold rationale
 
----
-
 ## Next Step
 
-After done → run `/contract-check` to validate actual pipeline data against source contracts.
+Previous: `/test`. After done → run `/contract-check` to validate actual pipeline data against source contracts.
 
-> Asset: `skills/dq/assets/dq_checks_template.md`
-> Reference: `phases/phase-6-data-quality.md`
+## References
+
+- Template: `skills/dq/assets/dq_checks_template.md`
+- Previous skill: `skills/test/SKILL.md`
+- Next skill: `skills/contract-check/SKILL.md`
+- Phase deep-dive: `phases/phase-6-data-quality.md`
+- Quality patterns: `implementation/quality/data-quality-patterns.md`

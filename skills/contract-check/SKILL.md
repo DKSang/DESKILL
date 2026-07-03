@@ -1,6 +1,6 @@
 ---
 name: de-contract-check
-description: "Automatically validate actual pipeline output against source data contracts to detect schema drift, SLA violations, and field-level deviations. Use this skill when the user asks 'validate my contracts', 'check schema drift', 'verify data matches contracts', 'contract compliance check', 'has my source schema changed', 'detect breaking changes in my API', or has both running pipeline data and source contracts and wants automated contract enforcement."
+description: "Validate actual pipeline output against source data contracts to detect schema drift, SLA violations, and field-level deviations. Use when the user asks 'validate my contracts', 'check schema drift', 'verify data matches contracts', 'contract compliance check', 'has my source schema changed', or 'detect breaking changes in my API'."
 ---
 
 # Skill: Validate Data vs Contracts
@@ -9,17 +9,20 @@ description: "Automatically validate actual pipeline output against source data 
 
 Automatically verify that **actual running data** matches the **source contracts** (`contracts/*.yaml`). When a source changes schema or violates an SLA, detect it immediately — don't let the contract go stale while the code has already diverged.
 
+- **Testing** (`/test`) = "Does transformation logic behave correctly?"
+- **DQ** (`/dq`) = "Is today's data within expected bounds?"
+- **Contract-check** (`/contract-check`) = "Does the actual data match the committed source contract?"
+
 ## When to stop at this skill
 
 Done when every source contract is auto-verified after each ingestion run, and results are reported with clear pass/fail and specific diffs.
-
----
 
 ## Steps
 
 ### Step 1 — Load contracts
 
 Read all `contracts/source-*.yaml`. Each contract has:
+
 - `schema.properties` → expected fields + types
 - `sla.freshness` → max allowed data age
 - `quality.checks` → committed checks
@@ -27,6 +30,7 @@ Read all `contracts/source-*.yaml`. Each contract has:
 ### Step 2 — Compare against actual data
 
 For each contract:
+
 1. **Schema check**: Actual columns vs expected columns → detect added/removed/renamed
 2. **Type check**: Actual types vs expected types
 3. **Freshness check**: Latest `_loaded_at` vs SLA
@@ -36,9 +40,7 @@ For each contract:
 
 A failure report must show **exactly** which fields differ and how — not just "contract violated."
 
----
-
-## Output
+## Output format
 
 Create `quality/contract_check.py`:
 
@@ -226,8 +228,6 @@ if __name__ == "__main__":
     print(json.dumps(report, indent=2))
 ```
 
----
-
 ## DONE WHEN
 
 - [ ] Every `contracts/source-*.yaml` is auto-validated after each ingestion run
@@ -236,10 +236,14 @@ if __name__ == "__main__":
 - [ ] Freshness SLA violations → detected
 - [ ] `docs/contract_check_report.json` generated after each run with clear pass/fail
 
----
-
 ## Next Step
 
-After done → run `/dag` to wire everything into an orchestrated workflow.
+Previous: `/dq`. After done → run `/dag` to wire everything into an orchestrated workflow.
 
-> Script: `skills/contract-check/scripts/validate_contract.py`
+## References
+
+- Script: `skills/contract-check/scripts/validate_contract.py`
+- Previous skill: `skills/dq/SKILL.md`
+- Next skill: `skills/dag/SKILL.md`
+- Phase deep-dives: `phases/phase-1-data-contracts.md`, `phases/phase-6-data-quality.md`
+- Quality patterns: `implementation/quality/data-quality-patterns.md`
