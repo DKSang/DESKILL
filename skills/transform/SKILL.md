@@ -1,19 +1,17 @@
 ---
 name: de-transform
-description: "Implement Silver (cleaned) and Gold (analytics-ready) data transformation models for a data engineering project. Use this skill when the user says 'transform my data', 'write dbt models', 'write Spark jobs', 'clean raw data', 'build Silver layer', 'build Gold layer', 'implement transformation logic', 'deduplicate data', 'aggregate to grain', or has Bronze data and needs analytics-ready tables. Also use when the user asks how to go from raw data to something a dashboard can use."
+description: "Implement Silver (cleaned) and Gold (analytics-ready) data models. Trigger: 'transform my data', 'write dbt models', 'write Spark jobs', 'clean raw data', 'build Silver layer', 'build Gold layer', 'implement transformation logic', 'deduplicate data', 'aggregate to grain', or when the user has Bronze data and needs analytics-ready tables."
 ---
 
 # Skill: Implement Transformations (Silver + Gold)
 
 ## Purpose
 
-Turn raw Bronze data into **Silver** (clean, trustworthy) and then **Gold** (analytics-ready, answering specific analytical questions). Every step is small and named clearly — so when numbers are wrong, you can trace back to the exact step that caused it.
+Turn raw Bronze data into **Silver** (clean, trustworthy) and then **Gold** (analytics-ready). Each step is small and named clearly so wrong numbers can be traced back to the step that produced them.
 
 ## When to stop at this skill
 
-Done when every Gold table answers at least 1 analytical question from `docs/business_problem.md` and all models run without errors.
-
----
+Done when every Gold table answers at least one analytical question from `docs/business_problem.md` and all models run without errors.
 
 ## Steps
 
@@ -25,21 +23,21 @@ For each source, create a Silver model that does **4 things and only 4 things**:
 |------|-------------|
 | **Standardize types** | Cast string dates → timestamp, string numbers → float |
 | **Deduplicate** | By natural key (not ingestion order) |
-| **Handle nulls explicitly** | Decide: default value / drop / flag — never use `DROP NULL` without documenting why |
-| **Join sources** | Only join if both sources are clean, using join keys verified in the contract |
+| **Handle nulls explicitly** | Default value / drop / flag — document the decision |
+| **Join sources** | Only join if both sources are clean, using keys verified in the contract |
 
-**DO NOT do in Silver**: business aggregations, derived metrics, business-rule filters.
+**Do NOT do in Silver**: business aggregations, derived metrics, business-rule filters.
 
 ### Step 2 — Gold layer: aggregations at the right grain
 
-For each analytical question, create a Gold model at the **grain** defined in `docs/dw_schema.md`:
+For each analytical question, create a Gold model at the grain defined in `docs/dw_schema.md`:
 
 ```sql
 -- Gold: fct_candles_daily
 -- Grain: 1 stock × 1 trading day
 -- Answers: "daily OHLC and volume per stock"
 SELECT
-    {{ generate_surrogate_key(['company_id', 'trade_date']) }} AS candle_id,
+    {{ dbt_utils.generate_surrogate_key(['company_id', 'trade_date']) }} AS candle_id,
     company_id,
     trade_date,
     open,
@@ -48,7 +46,7 @@ SELECT
     close,
     volume
 FROM {{ ref('stg_<source>') }}
-WHERE close IS NOT NULL  -- Non-trading days → no record
+WHERE close IS NOT NULL
 ```
 
 ### Step 3 — Incremental strategy
@@ -60,15 +58,14 @@ Choose the right strategy based on volume and update pattern:
 | **Full refresh** | Small data (<1M rows), simpler. Use in dev. |
 | **Incremental (append)** | Immutable events — only append new records |
 | **Incremental (merge/upsert)** | Records may update — use a watermark column |
-| **Incremental (delete+insert)** | When old records in a partition need to be replaced |
+| **Incremental (delete+insert)** | Old records in a partition must be replaced |
 
----
+## Output format
 
-## Output by chosen tool
-
-### If using dbt:
+### If using dbt
 
 **Silver** (`models/staging/stg_<source>.sql`):
+
 ```sql
 -- models/staging/stg_<source>.sql
 {{
@@ -89,9 +86,8 @@ WITH source AS (
 renamed AS (
     SELECT
         CAST(<field1> AS VARCHAR)     AS <field1>,
-        CAST(<field2> AS TIMESTAMP)   AS <field2_at>,
+        CAST(<field2> AS TIMESTAMP)  AS <field2_at>,
         CAST(<field3> AS DECIMAL(10,4)) AS <field3>,
-        -- Deduplication: keep latest by natural key
         ROW_NUMBER() OVER (
             PARTITION BY <natural_key>
             ORDER BY _loaded_at DESC
@@ -105,6 +101,7 @@ WHERE _row_num = 1
 ```
 
 **Gold** (`models/marts/fct_<entity>_<grain>.sql`):
+
 ```sql
 -- models/marts/fct_<entity>_<grain>.sql
 {{
@@ -120,7 +117,6 @@ SELECT
     t.time_id,
     s.<measure1>,
     s.<measure2>,
-    -- Derived metrics (document the formula)
     CASE
         WHEN s.<measure1_prev> = 0 THEN NULL
         ELSE (s.<measure1> - s.<measure1_prev>) / s.<measure1_prev> * 100
@@ -129,7 +125,7 @@ FROM {{ ref('stg_<source>') }} s
 LEFT JOIN {{ ref('dim_time') }} t ON s.<date_field> = t.date
 ```
 
-### If using Spark (PySpark):
+### If using Spark (PySpark)
 
 ```python
 # transform/silver/<source>.py
@@ -158,26 +154,26 @@ df = df.withColumn("<field>",
      .otherwise(F.col("<field>"))
 )
 
-# Write Silver (Parquet, partitioned)
+# Write Silver
 df.write.mode("overwrite").partitionBy("<date_col>") \
     .parquet("data/silver/<source>/")
 ```
-
----
 
 ## DONE WHEN
 
 - [ ] Silver models: no duplicates by natural key, nulls handled explicitly, types standardized
 - [ ] Gold models: created at the correct grain from `docs/dw_schema.md`
-- [ ] Every analytical question from `docs/business_problem.md` has at least 1 Gold table answering it
+- [ ] Every analytical question from `docs/business_problem.md` has at least one Gold table answering it
 - [ ] Incremental strategy is clear (full refresh / incremental) and documented
 - [ ] Models run successfully without errors
 
----
-
 ## Next Step
 
-After done → run `/test` to write a test suite for your transformation logic.
+Previous: `/ingest`. After done → run `/test` to write a test suite for your transformation logic.
 
-> Reference: `skills/transform/references/transformation_patterns.md`
-> `phases/phase-5-transformation-testing.md`
+## References
+
+- Transformation patterns: `skills/transform/references/transformation_patterns.md`
+- Phase deep-dive: `phases/phase-5-transformation-testing.md`
+- Previous skill: `skills/ingest/SKILL.md`
+- Next skill: `skills/test/SKILL.md`

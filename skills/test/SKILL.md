@@ -1,22 +1,20 @@
 ---
 name: de-test
-description: "Write and run a data pipeline test suite covering schema correctness and transformation logic. Use this skill when the user says 'write tests for my pipeline', 'test my transformations', 'add dbt tests', 'how do I test data quality at code level', 'unit test my SQL', 'write schema tests', 'test my data models', or has Silver/Gold models and wants to validate logic correctness. Note: this skill is for testing LOGIC at code-change time — for runtime data quality monitoring use /dq instead."
+description: "Write and run a data pipeline test suite covering schema and transformation logic. Trigger: 'write tests for my pipeline', 'test my transformations', 'add dbt tests', 'unit test my SQL', 'write schema tests', 'test my data models'. Note: this skill validates LOGIC at code-change time — for runtime data quality use /dq."
 ---
 
 # Skill: Write & Run Test Suite
 
 ## Purpose
 
-Prove that transformation **logic is correct** — not that data is correct (that's `/dq`'s job). This distinction matters: tests run when code changes, DQ checks run when data changes.
+Prove that transformation **logic is correct** — not that data is correct (that's `/dq`). Tests run when code changes; DQ checks run when data changes.
 
-**Testing = "Does this SQL do what I think it does?"**
-**DQ = "Is today's data within expected bounds?"**
+- **Testing** = "Does this SQL do what I think it does?"
+- **DQ** = "Is today's data within expected bounds?"
 
 ## When to stop at this skill
 
 Done when schema tests and logic tests for every non-trivial calculation all pass.
-
----
 
 ## Steps
 
@@ -36,7 +34,7 @@ Every Gold and Silver model must have at minimum:
 - Multi-source joins
 - Percentage/ratio calculations
 
-For each non-trivial calculation, write a test with **known input → known expected output**. Don't let AI write test cases without manual verification — AI often writes tests that pass against incorrect code.
+For each non-trivial calculation, write a test with **known input → known expected output**. Verify AI-generated test cases manually — passing tests against incorrect code are worse than no tests.
 
 ### Step 3 — Edge cases to cover
 
@@ -49,13 +47,12 @@ For each non-trivial calculation, write a test with **known input → known expe
 | First/last record in window | Window functions have correct boundaries |
 | Division by zero | % change when previous = 0 |
 
----
+## Output format
 
-## Output by chosen tool
-
-### If using dbt:
+### If using dbt
 
 **Schema tests** (`models/<model>.yml`):
+
 ```yaml
 version: 2
 
@@ -92,6 +89,7 @@ models:
 ```
 
 **Logic tests** (`tests/test_<calculation>.sql`):
+
 ```sql
 -- tests/test_pct_change_calculation.sql
 -- Verify: pct_change = (close - prev_close) / prev_close * 100
@@ -113,20 +111,21 @@ actual AS (
     FROM input
 )
 
--- Test passes when this returns 0 rows (no failures)
+-- Test passes when this returns 0 rows
 SELECT *
 FROM actual
-WHERE ABS(actual_pct_change - expected_pct_change) > 0.001  -- float tolerance
+WHERE ABS(actual_pct_change - expected_pct_change) > 0.001
 ```
 
-**Running tests:**
+**Run tests:**
+
 ```bash
 dbt test                        # All tests
 dbt test --select fct_candles   # Single model
 dbt test --store-failures       # Save failures to DB for inspection
 ```
 
-### If using pytest + pandas/Spark:
+### If using pytest + pandas/Spark
 
 ```python
 # tests/test_silver_dedup.py
@@ -136,45 +135,38 @@ from transform.silver.companies import deduplicate_companies
 
 
 def test_dedup_keeps_latest_record():
-    """With 2 records for the same ticker, keep the one with the newest _loaded_at."""
     input_df = pd.DataFrame({
         "ticker": ["AAPL", "AAPL"],
         "name": ["Apple Old", "Apple New"],
         "_loaded_at": ["2024-01-01", "2024-01-02"],
     })
-
     result = deduplicate_companies(input_df)
-
     assert len(result) == 1
     assert result.iloc[0]["name"] == "Apple New"
 
 
 def test_dedup_preserves_distinct_tickers():
-    """Records with different tickers are not removed."""
     input_df = pd.DataFrame({
         "ticker": ["AAPL", "MSFT"],
         "name": ["Apple", "Microsoft"],
         "_loaded_at": ["2024-01-01", "2024-01-01"],
     })
-
     result = deduplicate_companies(input_df)
-
     assert len(result) == 2
 
 
 def test_empty_input_returns_empty():
-    """Empty input doesn't crash — returns empty DataFrame."""
     input_df = pd.DataFrame(columns=["ticker", "name", "_loaded_at"])
     result = deduplicate_companies(input_df)
     assert len(result) == 0
 ```
 
+**Run tests:**
+
 ```bash
 pytest tests/ -v              # Run all
 pytest tests/ -v --tb=short   # Short traceback on failure
 ```
-
----
 
 ## DONE WHEN
 
@@ -184,11 +176,13 @@ pytest tests/ -v --tb=short   # Short traceback on failure
 - [ ] Edge cases covered: empty input, duplicates, nulls in join key
 - [ ] All tests pass (`dbt test` or `pytest` returns 0 failures)
 
----
-
 ## Next Step
 
-After done → run `/dq` to implement runtime data quality monitoring.
+Previous: `/transform`. After done → run `/dq` to implement runtime data quality monitoring.
 
-> Asset: `skills/test/assets/test_templates.md` — test templates by calculation type.
-> Reference: `phases/phase-5-transformation-testing.md`
+## References
+
+- Test templates: `skills/test/assets/test_templates.md`
+- Phase deep-dive: `phases/phase-5-transformation-testing.md`
+- Previous skill: `skills/transform/SKILL.md`
+- Next skill: `skills/dq/SKILL.md`

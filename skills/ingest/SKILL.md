@@ -1,63 +1,59 @@
 ---
 name: de-ingest
-description: "Implement the Bronze/raw ingestion layer to pull data from a source into storage reliably. Use this skill when the user says 'write an ingestion script', 'fetch data from API', 'load raw data', 'implement Bronze layer', 'connect to [source]', 'how do I ingest from [API/database/file]', 'write a data loader', or has a source contract ready and needs working ingestion code. Also use when existing ingestion code has no retry logic, no metadata tagging, or no validation — help refactor it."
+description: "Implement the Bronze/raw ingestion layer. Trigger: 'write an ingestion script', 'fetch data from API', 'load raw data', 'implement Bronze layer', 'connect to [source]', 'how do I ingest from [API/database/file]', 'write a data loader'. Also use when existing ingestion code lacks retry logic, metadata tags, or validation."
 ---
 
 # Skill: Implement Bronze Ingestion
 
 ## Purpose
 
-Move data from source to raw storage **reliably** — no transformation, no business logic, just extract and load. Each source gets its own script. Concerns are separated: one source failing should not block another.
+Move data from source to raw storage **reliably** — no transformation, no business logic. Each source gets its own script so one source failing does not block another.
 
 ## When to stop at this skill
 
 Done when Bronze storage has real data, the script has retry/logging/validation, and `_loaded_at` + `_source` metadata tags are present on every record.
 
----
-
 ## Steps
 
 ### Step 1 — Read the source contract
 
-Open `contracts/source-<name>.yaml`. From it, determine:
+Open `contracts/source-<name>.yaml`. Determine:
 - **Endpoint / access method**
 - **Auth type** → load from `.env`
-- **Schema** → use for validation
-- **Schedule** → determine incremental strategy (full/incremental)
-- **Rate limit** → calculate sleep time between calls if needed
+- **Schema** → validate records against it
+- **Schedule** → incremental strategy (full/incremental)
+- **Rate limit** → sleep time between calls if needed
 
-### Step 2 — Implement using the standard pattern
+### Step 2 — Implement the standard pattern
 
-Every ingestion script must have **5 components**:
+Every ingestion script needs **5 components**:
 
 | Component | Reason |
 |-----------|--------|
-| **Retry with exponential backoff** | API transient failures are normal — no retry = fragile pipeline |
-| **Schema validation** | Catch contract drift early — before bad data reaches downstream |
-| **Metadata tagging** | `_loaded_at`, `_source` → downstream needs to know where and when data came from |
-| **Partitioned output** | By date → enables incremental load, no full refresh every time |
-| **Actionable logging** | Logs must be sufficient to debug without rerunning — record request params, response status, row count |
+| **Retry with exponential backoff** | Transient API failures are normal |
+| **Schema validation** | Catch contract drift before downstream |
+| **Metadata tagging** | `_loaded_at`, `_source` required downstream |
+| **Partitioned output** | Date partitions enable incremental loads |
+| **Actionable logging** | Log request params, status, row count |
 
 ### Step 3 — Start small, validate, then scale
 
-**Don't** run full scope immediately. Process:
 1. Run with 1 entity / 1 day / 1 page
 2. Verify output schema and content
-3. Scale to full scope once logic is verified
+3. Scale to full scope
 
 ### Step 4 — Verify Bronze output
 
-After running, validate:
 ```python
-# Quick sanity check
 import duckdb
 conn = duckdb.connect()
-print(conn.sql("SELECT COUNT(*), MIN(_loaded_at), MAX(_loaded_at) FROM read_parquet('data/bronze/<source>/**/*.parquet')").df())
+print(conn.sql("""
+    SELECT COUNT(*), MIN(_loaded_at), MAX(_loaded_at)
+    FROM read_parquet('data/bronze/<source>/**/*.parquet')
+""").df())
 ```
 
----
-
-## Output
+## Output format
 
 Create `ingestion/<source-name>/ingest.py`:
 
@@ -93,7 +89,7 @@ API_KEY = os.getenv("<SOURCE>_API_KEY")
 BASE_URL = "<api-base-url>"
 BRONZE_PATH = Path("data/bronze/<source-name>")
 MAX_RETRIES = 3
-BACKOFF_BASE = 2  # seconds — doubles each retry: 2s, 4s, 8s
+BACKOFF_BASE = 2  # seconds: 2s, 4s, 8s
 
 
 # ─── Retry ───────────────────────────────────────────────────────────────────
@@ -157,7 +153,6 @@ def tag_metadata(records: list[dict], source: str, params: dict = None) -> list[
 
 # ─── Storage ─────────────────────────────────────────────────────────────────
 def write_bronze(records: list[dict], partition_date: str, source: str) -> Path:
-    import json
     partition_path = BRONZE_PATH / partition_date
     partition_path.mkdir(parents=True, exist_ok=True)
     output_file = partition_path / f"{datetime.now(timezone.utc).strftime('%H%M%S')}.json"
@@ -173,21 +168,13 @@ def ingest(partition_date: str = None):
 
     logger.info(f"Starting ingestion | source=<source-name> | partition={partition_date}")
 
-    # 1. Fetch
     params = {"date": partition_date}
     raw_data = fetch_with_retry(f"{BASE_URL}/<endpoint>", params=params)
-
-    # 2. Normalize to list
     records = raw_data if isinstance(raw_data, list) else raw_data.get("results", [raw_data])
     logger.info(f"Fetched {len(records)} records")
 
-    # 3. Validate
     valid_records = validate_schema(records, source="<source-name>")
-
-    # 4. Tag metadata
     tagged = tag_metadata(valid_records, source="<source-name>", params=params)
-
-    # 5. Write
     output_path = write_bronze(tagged, partition_date, source="<source-name>")
 
     logger.info(f"Ingestion complete | records={len(tagged)} | output={output_path}")
@@ -201,8 +188,6 @@ if __name__ == "__main__":
     print(result)
 ```
 
----
-
 ## DONE WHEN
 
 - [ ] Script runs successfully — Bronze storage has real data
@@ -212,15 +197,15 @@ if __name__ == "__main__":
 - [ ] Output partitioned by date
 - [ ] Logging sufficient to debug without rerunning
 
----
-
-## Feedback loop
-
-If the actual response differs from the contract → **update the contract immediately** (`contracts/source-<name>.yaml`), don't just fix the code.
-
 ## Next Step
 
-After all sources have been ingested → run `/transform` to build Silver and Gold models.
+Previous: `/env`. After all sources are ingested → run `/transform` to build Silver and Gold models.
 
-> Script template: `skills/ingest/scripts/ingestion_template.py`
-> Reference: `skills/ingest/references/ingestion_patterns.md`
+If the actual response differs from the contract → update `contracts/source-<name>.yaml` immediately, don't just patch the code.
+
+## References
+
+- Template: `skills/ingest/scripts/ingestion_template.py`
+- Phase deep-dive: `phases/phase-4-ingestion.md`
+- Previous skill: `skills/env/SKILL.md`
+- Next skill: `skills/transform/SKILL.md`
