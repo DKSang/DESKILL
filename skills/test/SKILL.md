@@ -1,4 +1,4 @@
-﻿---
+---
 name: de-test
 description: "Write and run a data pipeline test suite covering schema and transformation logic. Trigger: 'write tests for my pipeline', 'test my transformations', 'add dbt tests', 'unit test my SQL', 'write schema tests', 'test my data models'. Note: this skill validates LOGIC at code-change time â€” for runtime data quality use /dq."
 ---

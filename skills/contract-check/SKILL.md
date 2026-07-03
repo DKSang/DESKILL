@@ -1,4 +1,4 @@
-﻿---
+---
 name: de-contract-check
 description: "Validate actual pipeline output against source data contracts to detect schema drift, SLA violations, and field-level deviations. Use when the user asks 'validate my contracts', 'check schema drift', 'verify data matches contracts', 'contract compliance check', 'has my source schema changed', or 'detect breaking changes in my API'."
 ---

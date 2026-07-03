@@ -1,4 +1,4 @@
-﻿---
+---
 name: de-ingest
 description: "Implement the Bronze/raw ingestion layer. Trigger: 'write an ingestion script', 'fetch data from API', 'load raw data', 'implement Bronze layer', 'connect to [source]', 'how do I ingest from [API/database/file]', 'write a data loader'. Also use when existing ingestion code lacks retry logic, metadata tags, or validation."
 ---

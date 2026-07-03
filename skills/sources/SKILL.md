@@ -1,4 +1,4 @@
-﻿---
+---
 name: de-sources
 description: "Evaluate data sources and produce machine-verifiable source contracts before writing ingestion code. Use when the user asks 'what data sources should I use', 'help me write a data contract', 'is this API reliable enough', or wants to start coding ingestion before documenting sources."
 ---

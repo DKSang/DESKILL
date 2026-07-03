@@ -1,4 +1,4 @@
-﻿---
+---
 name: de-dq
 description: "Implement runtime data quality monitoring on actual pipeline output â€” freshness, volume, schema drift, and distribution checks. Use when the user asks 'check my data quality', 'set up DQ monitoring', 'freshness checks', 'volume anomaly detection', 'schema drift alerts', or 'monitor my pipeline data'. For testing transformation logic at code-change time, use /test."
 ---

@@ -1,4 +1,4 @@
-﻿---
+---
 name: de-transform
 description: "Implement Silver (cleaned) and Gold (analytics-ready) data models. Trigger: 'transform my data', 'write dbt models', 'write Spark jobs', 'clean raw data', 'build Silver layer', 'build Gold layer', 'implement transformation logic', 'deduplicate data', 'aggregate to grain', or when the user has Bronze data and needs analytics-ready tables."
 ---

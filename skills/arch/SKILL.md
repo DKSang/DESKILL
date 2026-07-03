@@ -1,4 +1,4 @@
-﻿---
+---
 name: de-arch
 description: "Design the data pipeline architecture and choose exactly one tool per category. Use this skill when the user asks 'what architecture should I use', 'ETL or ELT?', 'which tools should I pick', 'design my data platform', 'how should I structure my pipeline', 'medallion or lakehouse?', 'Airflow or Prefect?', or has source contracts ready and needs to commit to a stack before writing code."
 ---

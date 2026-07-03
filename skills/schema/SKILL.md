@@ -1,4 +1,4 @@
-﻿---
+---
 name: de-schema
 description: "Design the data warehouse schema â€” Fact tables, Dimension tables, grain definitions, and relationships â€” and produce `docs/dw_schema.md`. Use this skill when the user asks about DW schema, star schema, snowflake schema, galaxy schema, dimensional modeling, 'what tables should I create', 'how to model data for analytics', 'Fact vs Dim', or already has analytical questions and needs a table design."
 ---

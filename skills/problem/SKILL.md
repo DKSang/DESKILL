@@ -1,4 +1,4 @@
-﻿---
+---
 name: de-problem
 description: "Define the business problem, persona, and analytical questions for a data engineering project before choosing tools or writing code. Use when the user says 'I want to build a pipeline for...', 'where do I start', 'what should I build first', or jumps straight to tools without a clear problem statement."
 ---

@@ -1,4 +1,4 @@
-﻿---
+---
 name: de-env
 description: "Create a reproducible local development environment and produce `docker-compose.yml`, `.env.template`, and `requirements.txt`. Use this skill when the user asks 'how do I set up my environment', 'write a docker-compose for [tools]', 'configure my dev environment', 'what do I need to install', 'how do I containerize my pipeline', or has committed to a tool stack and needs it running locally."
 ---
