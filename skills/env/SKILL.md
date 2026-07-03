@@ -1,6 +1,6 @@
 ---
 name: de-env
-description: "Generate a reproducible local development environment for a data engineering project. Use this skill when the user asks 'how do I set up my environment', 'write a docker-compose for [tools]', 'configure my dev environment', 'what do I need to install', 'how do I containerize my pipeline', or has committed to a tool stack and needs to get it running locally. Also use when the user struggles with environment inconsistency or 'it works on my machine' problems."
+description: "Create a reproducible local development environment and produce `docker-compose.yml`, `.env.template`, and `requirements.txt`. Use this skill when the user asks 'how do I set up my environment', 'write a docker-compose for [tools]', 'configure my dev environment', 'what do I need to install', 'how do I containerize my pipeline', or has committed to a tool stack and needs it running locally."
 ---
 
 # Skill: Setup Development Environment
@@ -12,8 +12,6 @@ Create a **reproducible** local environment — anyone who clones the repo can r
 ## When to stop at this skill
 
 Done when `docker compose up` succeeds from a **fresh clone** (not from a machine with pre-installed tools) and the orchestrator UI is accessible.
-
----
 
 ## Steps
 
@@ -44,6 +42,7 @@ Rules when writing:
 ### Step 3 — Create .env.template
 
 List **every** environment variable needed:
+
 ```bash
 # .env.template — copy to .env and fill in values
 # NEVER commit .env to git
@@ -64,6 +63,7 @@ MINIO_ROOT_PASSWORD=
 ### Step 4 — Pin dependencies
 
 Create `requirements.txt` with **pinned versions**:
+
 ```
 apache-airflow==2.9.0
 dbt-core==1.8.0
@@ -78,6 +78,7 @@ Reason for pinning: `pip install apache-airflow` today may install a different v
 ### Step 5 — Verify from fresh clone
 
 Test acceptance criteria:
+
 ```bash
 git clone <repo>
 cd <project>
@@ -90,9 +91,7 @@ curl http://localhost:8080/health  # Or appropriate URL for your tool
 
 If any step needs a manual step not in the README → not done yet.
 
----
-
-## Output
+## Output format
 
 Create 3 files:
 
@@ -204,8 +203,6 @@ services:
       - airflow-init
 ```
 
----
-
 ## DONE WHEN
 
 - [ ] `docker compose up` succeeds from a fresh clone (nothing pre-installed)
@@ -214,11 +211,13 @@ services:
 - [ ] `requirements.txt` pins specific versions
 - [ ] Orchestrator UI accessible at `localhost:<port>`
 
----
-
 ## Next Step
 
-After done → run `/ingest` to implement the Bronze ingestion layer.
+Previous: `/schema`. After done → run `/ingest` to implement the Bronze ingestion layer.
 
-> Asset: `skills/env/assets/docker-compose-base.yml` — ready-to-customize template.
-> Reference: `phases/phase-3-environment-setup.md`
+## References
+
+- Template: `skills/env/assets/docker-compose-base.yml` — ready-to-customize template
+- Phase deep-dive: `phases/phase-3-environment-setup.md`
+- Previous skill: `skills/schema/SKILL.md`
+- Next skill: `skills/ingest/SKILL.md`

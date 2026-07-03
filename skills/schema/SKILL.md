@@ -1,6 +1,6 @@
 ---
 name: de-schema
-description: "Design the data warehouse schema — Fact tables, Dimension tables, grain definitions, and table relationships — for a data engineering project. Use this skill when the user asks about DW schema, Star schema, Snowflake schema, Galaxy schema, what tables to create, how to model data for analytics, dimensional modeling, Fact vs Dim, 'what should my DW look like', or mentions needing tables to answer business questions — even if they don't say 'data warehouse' explicitly. Also use when the user already has analytical questions but doesn't know how to translate them into table design."
+description: "Design the data warehouse schema — Fact tables, Dimension tables, grain definitions, and relationships — and produce `docs/dw_schema.md`. Use this skill when the user asks about DW schema, star schema, snowflake schema, galaxy schema, dimensional modeling, 'what tables should I create', 'how to model data for analytics', 'Fact vs Dim', or already has analytical questions and needs a table design."
 ---
 
 # Skill: Design Data Warehouse Schema
@@ -11,9 +11,7 @@ Translate **analytical questions** from `docs/business_problem.md` into concrete
 
 ## When to stop at this skill
 
-Only move to `/env` when `docs/dw_schema.md` has: every analytical question mapped to ≥1 Fact table, every Dim has clear PK/FK.
-
----
+Only move to `/env` when `docs/dw_schema.md` has: every analytical question mapped to ≥1 Fact table, every Fact table has defined grain, and every Dim has a clear PK/FK.
 
 ## Steps
 
@@ -70,8 +68,6 @@ ORDER BY f.volume DESC LIMIT 10;
 ```
 
 If you can't write the SQL → the schema isn't complete; go back and adjust.
-
----
 
 ## Output format
 
@@ -152,8 +148,6 @@ erDiagram
 ```
 ````
 
----
-
 ## DONE WHEN
 
 - [ ] Every analytical question mapped to ≥1 Fact table (clear mapping table)
@@ -162,11 +156,14 @@ erDiagram
 - [ ] Every FK in a Fact table references the correct Dim
 - [ ] Can write SQL for at least 2 analytical questions from this schema
 
----
-
 ## Next Step
 
-After done → run `/env` to set up your reproducible development environment.
+Previous: `/arch`. After done → run `/env` to set up your reproducible development environment.
 
-> Asset: `skills/schema/assets/dw_schema_template.md`
-> Reference: `phases/phase-2-architecture.md`
+## References
+
+- Template: `skills/schema/assets/dw_schema_template.md`
+- Phase deep-dive: `phases/phase-2-architecture.md`
+- Next phase: `phases/phase-3-environment-setup.md`
+- Previous skill: `skills/arch/SKILL.md`
+- Next skill: `skills/env/SKILL.md`
