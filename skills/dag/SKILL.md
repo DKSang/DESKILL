@@ -208,8 +208,20 @@ from datetime import timedelta
       cache_expiration=timedelta(days=1))
 def ingest_source_a(run_date: str): ...
 
+@task(retries=3, retry_delay_seconds=300)
+def ingest_source_b(run_date: str): ...
+
 @task(retries=2, retry_delay_seconds=120)
 def transform_silver(run_date: str): ...
+
+@task(retries=2, retry_delay_seconds=120)
+def transform_gold(run_date: str): ...
+
+@task(retries=1, retry_delay_seconds=60)
+def dq_checks(run_date: str): ...
+
+@task(retries=1, retry_delay_seconds=60)
+def contract_check(run_date: str): ...
 
 @flow(name="<project>-pipeline", log_prints=True)
 def pipeline(run_date: str = None):

@@ -1,33 +1,33 @@
 ---
 name: de-schema
-description: "Design the data warehouse schema â€” Fact tables, Dimension tables, grain definitions, and relationships â€” and produce `docs/dw_schema.md`. Use this skill when the user asks about DW schema, star schema, snowflake schema, galaxy schema, dimensional modeling, 'what tables should I create', 'how to model data for analytics', 'Fact vs Dim', or already has analytical questions and needs a table design."
+description: "Design the data warehouse schema — Fact tables, Dimension tables, grain definitions, and relationships — and produce `docs/dw_schema.md`. Use this skill when the user asks about DW schema, star schema, snowflake schema, galaxy schema, dimensional modeling, 'what tables should I create', 'how to model data for analytics', 'Fact vs Dim', or already has analytical questions and needs a table design."
 ---
 
 # Skill: Design Data Warehouse Schema
 
 ## Purpose
 
-Translate **analytical questions** from `docs/business_problem.md` into concrete **Fact + Dimension tables** with clear grain, PK/FK, and relationships. This schema is the blueprint for `/transform` â€” without it, transformation is guesswork.
+Translate **analytical questions** from `docs/business_problem.md` into concrete **Fact + Dimension tables** with clear grain, PK/FK, and relationships. This schema is the blueprint for `/transform` — without it, transformation is guesswork.
 
 ## When to stop at this skill
 
-Only move to `/env` when `docs/dw_schema.md` has: every analytical question mapped to â‰¥1 Fact table, every Fact table has defined grain, and every Dim has a clear PK/FK.
+Only move to `/env` when `docs/dw_schema.md` has: every analytical question mapped to ≥1 Fact table, every Fact table has defined grain, and every Dim has a clear PK/FK.
 
 ## Steps
 
-### Step 1 â€” Determine grain for each Fact table
+### Step 1 — Determine grain for each Fact table
 
 Grain = **the smallest unit a single row in the Fact table represents**. This is the most important design decision.
 
 For each analytical question, ask: *"What does one row in this table represent?"*
 
 **Examples:**
-- "Daily trading volume per stock" â†’ grain: 1 stock Ă— 1 day
-- "News sentiment per article per stock" â†’ grain: 1 article Ă— 1 stock
+- "Daily trading volume per stock" → grain: 1 stock × 1 day
+- "News sentiment per article per stock" → grain: 1 article × 1 stock
 
-If two questions need different grains â†’ they need separate Fact tables.
+If two questions need different grains → they need separate Fact tables.
 
-### Step 2 â€” Identify Dimension tables
+### Step 2 — Identify Dimension tables
 
 Dimensions = **descriptive context** for each measurement in the Fact table. Typically:
 - **Who/What**: entity (company, product, user, news article)
@@ -37,15 +37,15 @@ Dimensions = **descriptive context** for each measurement in the Fact table. Typ
 
 > **Rule**: If a field in the Fact table is descriptive (not numeric), it probably belongs in a Dim.
 
-### Step 3 â€” Design each table
+### Step 3 — Design each table
 
 For each table, define:
 - **PK** (primary key)
-- **FK** (foreign keys â†’ dim tables)
+- **FK** (foreign keys → dim tables)
 - **Measures** (numeric columns in the Fact table)
 - **Attributes** (descriptive columns in the Dim table)
 
-### Step 4 â€” Choose a schema pattern
+### Step 4 — Choose a schema pattern
 
 | Pattern | When to use |
 |---------|-------------|
@@ -53,7 +53,7 @@ For each table, define:
 | **Snowflake Schema** | Dims are further normalized (Dim of Dim). Better storage but more complex joins. |
 | **Galaxy Schema** | Multiple Fact tables sharing Dims. Use when modeling multiple business processes. |
 
-### Step 5 â€” Map analytical questions â†’ tables
+### Step 5 — Map analytical questions → tables
 
 Verify every question in `docs/business_problem.md` can be answered with SQL from this schema:
 
@@ -67,19 +67,19 @@ WHERE t.week = CURRENT_WEEK - 1
 ORDER BY f.volume DESC LIMIT 10;
 ```
 
-If you can't write the SQL â†’ the schema isn't complete; go back and adjust.
+If you can't write the SQL → the schema isn't complete; go back and adjust.
 
 ## Output
 
 Create `docs/dw_schema.md`:
 
 ````markdown
-# Data Warehouse Schema â€” [Project Name]
+# Data Warehouse Schema — [Project Name]
 
 ## Schema Pattern
-[Star / Snowflake / Galaxy] â€” reason for choosing
+[Star / Snowflake / Galaxy] — reason for choosing
 
-## Analytical Question â†’ Table Mapping
+## Analytical Question → Table Mapping
 
 | Analytical Question | Fact Table | Dim Tables Used |
 |--------------------|-----------|-----------------|
@@ -121,8 +121,8 @@ Create `docs/dw_schema.md`:
 | Column | Type | PK/FK | Description |
 |--------|------|-------|-------------|
 | <fact>_id | integer | PK | Surrogate key |
-| <dim1>_id | integer | FK â†’ dim_<dim1> | |
-| time_id | integer | FK â†’ dim_time | |
+| <dim1>_id | integer | FK → dim_<dim1> | |
+| time_id | integer | FK → dim_time | |
 | [measure 1] | number | - | [unit + description] |
 | [measure 2] | number | - | [unit + description] |
 
@@ -150,7 +150,7 @@ erDiagram
 
 ## DONE WHEN
 
-- [ ] Every analytical question mapped to â‰¥1 Fact table (clear mapping table)
+- [ ] Every analytical question mapped to ≥1 Fact table (clear mapping table)
 - [ ] Every Fact table has grain defined in plain language
 - [ ] Every Dim table has a clear PK
 - [ ] Every FK in a Fact table references the correct Dim
@@ -158,7 +158,7 @@ erDiagram
 
 ## Next Step
 
-Previous: `/arch`. After done â†’ run `/env` to set up your reproducible development environment.
+Previous: `/arch`. After done → run `/env` to set up your reproducible development environment.
 
 ## References
 

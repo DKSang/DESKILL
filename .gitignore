@@ -46,3 +46,7 @@ great_expectations/uncommitted/
 *.tfstate
 *.tfstate.*
 .terraform/
+
+# Superpowers dev artifacts (plans/specs/reviews — not shipped)
+.superpowers/
+docs/superpowers/

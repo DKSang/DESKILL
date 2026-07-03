@@ -131,6 +131,14 @@ For implementation-level patterns beyond what skills provide:
 - `implementation/optimization/` — Spark partitioning, joins
 - `implementation/pipeline/` — end-to-end pipeline patterns
 
+## Machine-Readable Manifests
+
+For tooling and automated verification (not just Markdown):
+
+- `skills/skill-graph.json` — 14-skill dependency graph (skill → next/prev/phase/deliverable/assets)
+- `skills/deliverables.csv` — flat skill→deliverable→phase manifest
+- `tools/validate.py` — repo integrity validator (frontmatter, version sync, reference resolution, graph cycles). Run: `python tools/validate.py`
+
 ## AI Time-Optimization Tips
 
 - **AI fastest at**: boilerplate (Docker Compose, DAG skeletons, dbt scaffolding), summarizing API docs, generating test cases, writing docs

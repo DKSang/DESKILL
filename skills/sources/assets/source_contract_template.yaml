@@ -38,7 +38,7 @@ volume:
     500 tickers × 1 call/ticker × 1 run/day = 500 calls/day
     Free tier: 500 calls/day → margin = 1.0x (just fits)>
   fitsWithinLimit: <true|false>
-  marginX: <ratio: limit / callsPerRun, must be > 1>
+  marginX: "<ratio: limit / callsPerRun, must be > 1>"
 
 schedule:
   frequency: <monthly|daily|intraday|on-demand>

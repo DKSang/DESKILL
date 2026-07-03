@@ -1,0 +1,15 @@
+order,skill,trigger,stage,phase,deliverable,skill_file,assets,scripts,references,prev,next,feedback_to
+1,problem,/problem,discover,phase-0-discover,docs/business_problem.md,skills/problem/SKILL.md,skills/problem/assets/business_problem_template.md,,,NONE,sources,
+2,sources,/sources,discover,phase-1-data-contracts,contracts/source-*.yaml,skills/sources/SKILL.md,skills/sources/assets/source_contract_template.yaml,skills/sources/scripts/probe_source.py,,problem,arch,problem
+3,arch,/arch,design,phase-2-architecture,docs/architecture.md,skills/arch/SKILL.md,,,"skills/arch/references/patterns.md",sources,schema,
+4,schema,/schema,design,phase-2-architecture,docs/dw_schema.md,skills/schema/SKILL.md,skills/schema/assets/dw_schema_template.md,,,arch,env,
+5,env,/env,design,phase-3-environment-setup,docker-compose.yml + .env.template + requirements.txt,skills/env/SKILL.md,skills/env/assets/docker-compose-base.yml,,,schema,ingest,
+6,ingest,/ingest,build,phase-4-ingestion,ingestion/<source>/ingest.py,skills/ingest/SKILL.md,,skills/ingest/scripts/ingestion_template.py,skills/ingest/references/ingestion_patterns.md,env,transform,sources
+7,transform,/transform,build,phase-5-transformation-testing,Silver + Gold models,skills/transform/SKILL.md,,,skills/transform/references/transformation_patterns.md,ingest,test,schema
+8,test,/test,build,phase-5-transformation-testing,"tests/ (schema + logic, all passing)",skills/test/SKILL.md,skills/test/assets/test_templates.md,,,transform,dq,
+9,dq,/dq,quality,phase-6-data-quality,quality/dq_checks.py + docs/dq_report.md,skills/dq/SKILL.md,skills/dq/assets/dq_checks_template.md,,,test,contract-check,
+10,contract-check,/contract-check,quality,phase-6-data-quality,quality/contract_check.py + docs/contract_check_report.json,skills/contract-check/SKILL.md,,skills/contract-check/scripts/validate_contract.py,,dq,dag,sources
+11,dag,/dag,ship,phase-8-orchestration,dags/<project>_pipeline.py,skills/dag/SKILL.md,,,skills/dag/references/dag_patterns.md,contract-check,serve,"sources;arch"
+12,serve,/serve,ship,phase-7-serving,serving/app.py,skills/serve/SKILL.md,,,skills/serve/references/serving_patterns.md,dag,ci,"transform;schema"
+13,ci,/ci,ship,phase-9-governance,.github/workflows/ci.yml,skills/ci/SKILL.md,skills/ci/assets/github_actions_template.yml,,,serve,docs,
+14,docs,/docs,ship,phase-9-governance,README.md + data lineage + cost analysis,skills/docs/SKILL.md,skills/docs/assets/readme_template.md,,,ci,NONE,arch

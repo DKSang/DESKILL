@@ -11,40 +11,48 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-python@v5
         with:
-          node-version: 20
+          python-version: '3.11'
+
+      - name: Repo integrity (validate.py)
+        run: python tools/validate.py
 
       - name: Validate SKILL.md frontmatter
         run: |
-          head -10 SKILL.md | grep -q "^---" && echo "SKILL.md: OK" || echo "SKILL.md: missing frontmatter"
+          for f in SKILL.md skills/*/SKILL.md; do
+            head -1 "$f" | grep -q "^---" && echo "$f: frontmatter OK" || { echo "$f: MISSING frontmatter"; exit 1; }
+          done
 
       - name: Validate command files
         run: |
           for f in commands/*.md; do
-            [ -f "$f" ] && echo "Found: $f ($(wc -c < $f) bytes)"
+            [ -f "$f" ] && echo "Found: $f ($(wc -c < "$f") bytes)"
           done
 
       - name: Validate implementation files
         run: |
           for f in implementation/**/*.md; do
-            [ -f "$f" ] && echo "Found: $f ($(wc -c < $f) bytes)"
+            [ -f "$f" ] && echo "Found: $f ($(wc -c < "$f") bytes)"
           done
 
-      - name: Validate phase files
+      - name: Validate phase files (0-9)
         run: |
           for i in 0 1 2 3 4 5 6 7 8 9; do
-            [ -f "phases/phase-$i-*.md" ] && echo "Phase $i: OK" || echo "Phase $i: MISSING"
+            if ls phases/phase-$i-*.md >/dev/null 2>&1; then
+              echo "Phase $i: OK"
+            else
+              echo "Phase $i: MISSING"
+              exit 1
+            fi
           done
 
       - name: Validate YAML templates
         run: |
-          for f in templates/*.yaml; do
-            node -e "
-              const fs = require('fs');
-              try { JSON.parse(JSON.stringify(fs.readFileSync('$f', 'utf8'))); console.log('$f: readable'); }
-              catch(e) { console.log('$f: ERROR ' + e.message); }
-            "
+          for f in skills/**/*.yml skills/**/*.yaml; do
+            [ -f "$f" ] || continue
+            python -c "import yaml,sys; yaml.safe_load(open('$f')); print('$f: valid YAML')" \
+              || { echo "$f: INVALID YAML"; exit 1; }
           done
 
       - name: Check for broken internal links

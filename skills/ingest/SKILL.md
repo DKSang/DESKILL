@@ -7,7 +7,7 @@ description: "Implement the Bronze/raw ingestion layer. Trigger: 'write an inges
 
 ## Purpose
 
-Move data from source to raw storage **reliably** â€” no transformation, no business logic. Each source gets its own script so one source failing does not block another.
+Move data from source to raw storage **reliably** — no transformation, no business logic. Each source gets its own script so one source failing does not block another.
 
 ## When to stop at this skill
 
@@ -15,16 +15,16 @@ Done when Bronze storage has real data, the script has retry/logging/validation,
 
 ## Steps
 
-### Step 1 â€” Read the source contract
+### Step 1 — Read the source contract
 
 Open `contracts/source-<name>.yaml`. Determine:
 - **Endpoint / access method**
-- **Auth type** â†’ load from `.env`
-- **Schema** â†’ validate records against it
-- **Schedule** â†’ incremental strategy (full/incremental)
-- **Rate limit** â†’ sleep time between calls if needed
+- **Auth type** → load from `.env`
+- **Schema** → validate records against it
+- **Schedule** → incremental strategy (full/incremental)
+- **Rate limit** → sleep time between calls if needed
 
-### Step 2 â€” Implement the standard pattern
+### Step 2 — Implement the standard pattern
 
 Every ingestion script needs **5 components**:
 
@@ -36,13 +36,13 @@ Every ingestion script needs **5 components**:
 | **Partitioned output** | Date partitions enable incremental loads |
 | **Actionable logging** | Log request params, status, row count |
 
-### Step 3 â€” Start small, validate, then scale
+### Step 3 — Start small, validate, then scale
 
 1. Run with 1 entity / 1 day / 1 page
 2. Verify output schema and content
 3. Scale to full scope
 
-### Step 4 â€” Verify Bronze output
+### Step 4 — Verify Bronze output
 
 ```python
 import duckdb
@@ -84,7 +84,7 @@ logging.basicConfig(
 )
 logger = logging.getLogger("<source-name>-ingestion")
 
-# â”€â”€â”€ Config â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# ─── Config ──────────────────────────────────────────────────────────────────
 API_KEY = os.getenv("<SOURCE>_API_KEY")
 BASE_URL = "<api-base-url>"
 BRONZE_PATH = Path("data/bronze/<source-name>")
@@ -92,7 +92,7 @@ MAX_RETRIES = 3
 BACKOFF_BASE = 2  # seconds: 2s, 4s, 8s
 
 
-# â”€â”€â”€ Retry â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# ─── Retry ───────────────────────────────────────────────────────────────────
 def fetch_with_retry(url: str, params: dict = None, retries: int = MAX_RETRIES) -> Any:
     for attempt in range(1, retries + 1):
         try:
@@ -114,7 +114,7 @@ def fetch_with_retry(url: str, params: dict = None, retries: int = MAX_RETRIES) 
             time.sleep(wait)
 
 
-# â”€â”€â”€ Validation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# ─── Validation ──────────────────────────────────────────────────────────────
 REQUIRED_FIELDS = ["<field1>", "<field2>"]  # From contract schema
 
 def validate_schema(records: list[dict], source: str) -> list[dict]:
@@ -137,7 +137,7 @@ def validate_schema(records: list[dict], source: str) -> list[dict]:
     return valid
 
 
-# â”€â”€â”€ Metadata tagging â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# ─── Metadata tagging ────────────────────────────────────────────────────────
 def tag_metadata(records: list[dict], source: str, params: dict = None) -> list[dict]:
     loaded_at = datetime.now(timezone.utc).isoformat()
     return [
@@ -151,7 +151,7 @@ def tag_metadata(records: list[dict], source: str, params: dict = None) -> list[
     ]
 
 
-# â”€â”€â”€ Storage â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# ─── Storage ─────────────────────────────────────────────────────────────────
 def write_bronze(records: list[dict], partition_date: str, source: str) -> Path:
     partition_path = BRONZE_PATH / partition_date
     partition_path.mkdir(parents=True, exist_ok=True)
@@ -161,7 +161,7 @@ def write_bronze(records: list[dict], partition_date: str, source: str) -> Path:
     return output_file
 
 
-# â”€â”€â”€ Main â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# ─── Main ────────────────────────────────────────────────────────────────────
 def ingest(partition_date: str = None):
     if not partition_date:
         partition_date = datetime.now(timezone.utc).strftime("%Y-%m-%d")
@@ -190,18 +190,18 @@ if __name__ == "__main__":
 
 ## DONE WHEN
 
-- [ ] Script runs successfully â€” Bronze storage has real data
+- [ ] Script runs successfully — Bronze storage has real data
 - [ ] Retry with exponential backoff implemented
-- [ ] Schema validation implemented â€” invalid records go to DLQ, don't crash the run
+- [ ] Schema validation implemented — invalid records go to DLQ, don't crash the run
 - [ ] `_loaded_at` and `_source` present on every record
 - [ ] Output partitioned by date
 - [ ] Logging sufficient to debug without rerunning
 
 ## Next Step
 
-Previous: `/env`. After all sources are ingested â†’ run `/transform` to build Silver and Gold models.
+Previous: `/env`. After all sources are ingested → run `/transform` to build Silver and Gold models.
 
-If the actual response differs from the contract â†’ update `contracts/source-<name>.yaml` immediately, don't just patch the code.
+If the actual response differs from the contract → update `contracts/source-<name>.yaml` immediately, don't just patch the code.
 
 ## References
 

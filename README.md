@@ -87,9 +87,12 @@ DESKILL/
 │   ├── dag/                        #   Orchestration DAG
 │   ├── serve/                      #   Serving layer (dashboard / API)
 │   ├── ci/                         #   CI/CD (GitHub Actions)
-│   └── docs/                       #   Documentation
+│   ├── docs/                       #   Documentation
+│   ├── skill-graph.json            #   Machine-readable skill dependency graph
+│   └── deliverables.csv            #   Skill→deliverable→phase manifest
 ├── phases/                         # Deep-dive methodology (10 phases)
 ├── implementation/                 # Code patterns: Airflow, dbt, Spark, GE
+├── tools/                          # CLI installer + validate.py integrity checker
 └── agents/                         # AI agent personas
 ```
 
@@ -114,8 +117,8 @@ DESKILL/
 | Code patterns | Airflow, dbt, Spark, GE | Airflow, dbt, Spark, GE | — |
 | AI agent personas | data-engineer + backend-architect | data-engineer + backend-architect | — |
 | Skill graph | 14 skills, each suggests the next | — | — |
-| Anti-patterns | ~30 common mistakes cataloged | — | Yes (across 73 skills) |
-| Templates | 14 skill assets | — | 8 YAML |
+| Templates | 14 skill assets (YAML/MD/PY) | — | 8 YAML |
+| Machine-readable manifests | `skill-graph.json` + `deliverables.csv` + `validate.py` | — | — |
 | Packaging | npm + CLI + CI/CD + plugin | Plugin-only | Full IDE integration |
 
 ---

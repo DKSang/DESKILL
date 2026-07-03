@@ -2,19 +2,32 @@
   "plugins": [
     {
       "name": "deskill-de",
-      "version": "2.0.0",
-      "description": "Data Engineering Project Roadmap: lifecycle commands, implementation patterns, AI agent personas, and YAML templates for building production data pipelines",
+      "version": "3.1.0",
+      "description": "Data Engineering Project Roadmap: 14 sequential skills covering the full DE lifecycle — from business problem to production pipeline.",
       "skills": [
-        "./commands/spec.md",
-        "./commands/plan.md",
-        "./commands/build.md",
-        "./commands/validate.md",
-        "./commands/review.md",
-        "./commands/ship.md",
-        "./commands/data-pipeline.md",
-        "./commands/data-driven-feature.md",
-        "./agents/data-engineer.md",
-        "./agents/backend-architect.md"
+        "../SKILL.md",
+        "../skills/problem/SKILL.md",
+        "../skills/sources/SKILL.md",
+        "../skills/arch/SKILL.md",
+        "../skills/schema/SKILL.md",
+        "../skills/env/SKILL.md",
+        "../skills/ingest/SKILL.md",
+        "../skills/transform/SKILL.md",
+        "../skills/test/SKILL.md",
+        "../skills/dq/SKILL.md",
+        "../skills/contract-check/SKILL.md",
+        "../skills/dag/SKILL.md",
+        "../skills/serve/SKILL.md",
+        "../skills/ci/SKILL.md",
+        "../skills/docs/SKILL.md"
+      ],
+      "commands": [
+        "../commands/data-pipeline.md",
+        "../commands/data-driven-feature.md"
+      ],
+      "agents": [
+        "../agents/data-engineer.md",
+        "../agents/backend-architect.md"
       ],
       "categories": ["Data Engineering", "Pipeline Development", "ETL/ELT"],
       "author": "DESKILL",

@@ -1,13 +1,13 @@
 ---
 name: de-test
-description: "Write and run a data pipeline test suite covering schema and transformation logic. Trigger: 'write tests for my pipeline', 'test my transformations', 'add dbt tests', 'unit test my SQL', 'write schema tests', 'test my data models'. Note: this skill validates LOGIC at code-change time â€” for runtime data quality use /dq."
+description: "Write and run a data pipeline test suite covering schema and transformation logic. Trigger: 'write tests for my pipeline', 'test my transformations', 'add dbt tests', 'unit test my SQL', 'write schema tests', 'test my data models'. Note: this skill validates LOGIC at code-change time — for runtime data quality use /dq."
 ---
 
 # Skill: Write & Run Test Suite
 
 ## Purpose
 
-Prove that transformation **logic is correct** â€” not that data is correct (that's `/dq`). Tests run when code changes; DQ checks run when data changes.
+Prove that transformation **logic is correct** — not that data is correct (that's `/dq`). Tests run when code changes; DQ checks run when data changes.
 
 - **Testing** = "Does this SQL do what I think it does?"
 - **DQ** = "Is today's data within expected bounds?"
@@ -18,15 +18,15 @@ Done when schema tests and logic tests for every non-trivial calculation all pas
 
 ## Steps
 
-### Step 1 â€” Schema tests (required on every model)
+### Step 1 — Schema tests (required on every model)
 
 Every Gold and Silver model must have at minimum:
 - `not_null` on primary key
 - `unique` on primary key
 - `accepted_values` on categorical columns
-- `relationships` for every FK â†’ Dim table
+- `relationships` for every FK → Dim table
 
-### Step 2 â€” Logic tests (required for non-trivial calculations)
+### Step 2 — Logic tests (required for non-trivial calculations)
 
 "Non-trivial" = any calculation involving:
 - Window functions (rolling average, cumulative sum, rank)
@@ -34,9 +34,9 @@ Every Gold and Silver model must have at minimum:
 - Multi-source joins
 - Percentage/ratio calculations
 
-For each non-trivial calculation, write a test with **known input â†’ known expected output**. Verify AI-generated test cases manually â€” passing tests against incorrect code are worse than no tests.
+For each non-trivial calculation, write a test with **known input → known expected output**. Verify AI-generated test cases manually — passing tests against incorrect code are worse than no tests.
 
-### Step 3 â€” Edge cases to cover
+### Step 3 — Edge cases to cover
 
 | Edge case | Why it matters |
 |-----------|---------------|
@@ -93,7 +93,7 @@ models:
 ```sql
 -- tests/test_pct_change_calculation.sql
 -- Verify: pct_change = (close - prev_close) / prev_close * 100
--- Known input: prev_close=100, close=110 â†’ expected pct_change=10.0
+-- Known input: prev_close=100, close=110 → expected pct_change=10.0
 
 WITH input AS (
     SELECT
@@ -178,7 +178,7 @@ pytest tests/ -v --tb=short   # Short traceback on failure
 
 ## Next Step
 
-Previous: `/transform`. After done â†’ run `/dq` to implement runtime data quality monitoring.
+Previous: `/transform`. After done → run `/dq` to implement runtime data quality monitoring.
 
 ## References
 

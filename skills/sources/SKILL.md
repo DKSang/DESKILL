@@ -7,7 +7,7 @@ description: "Evaluate data sources and produce machine-verifiable source contra
 
 ## Purpose
 
-Before writing a single line of ingestion code, know exactly **how much you can trust each source** â€” what the actual schema is, whether rate limits are sufficient, whether join keys match. This skill produces a data contract per source: a written commitment, not a bookmark.
+Before writing a single line of ingestion code, know exactly **how much you can trust each source** — what the actual schema is, whether rate limits are sufficient, whether join keys match. This skill produces a data contract per source: a written commitment, not a bookmark.
 
 ## When to stop at this skill
 
@@ -15,14 +15,14 @@ This skill follows `/problem`. Only move to `/arch` when every source has a `con
 
 ## Steps
 
-### Step 1 â€” List candidate sources
+### Step 1 — List candidate sources
 
 From `docs/business_problem.md` (analytical questions), list **every** possible source. For each source, answer:
 - Access method: REST API / bulk file / database / scrape (prefer API or bulk export, avoid scrape).
 - Auth: none / API key / OAuth / service account.
-- Cost: $0 or a specific number â€” if unsure, test before committing.
+- Cost: $0 or a specific number — if unsure, test before committing.
 
-### Step 2 â€” Get the real schema (not from docs)
+### Step 2 — Get the real schema (not from docs)
 
 > **Important**: Documentation is often out of date. You must call the live API and record the schema from the actual response.
 
@@ -34,25 +34,25 @@ python skills/sources/scripts/probe_source.py \
   --params '{"limit": 1}'
 ```
 
-Paste the response into the contract. This is the real schema â€” not the schema from docs.
+Paste the response into the contract. This is the real schema — not the schema from docs.
 
-### Step 3 â€” Calculate rate limit math
+### Step 3 — Calculate rate limit math
 
 Never write "should be fine." Calculate concretely:
 
 ```
-Volume per run = number of entities Ă— number of fields Ă— number of runs/day
+Volume per run = number of entities × number of fields × number of runs/day
 Rate limit = X calls/minute (from docs + real-world verification)
-Margin = Rate limit / Volume per run â†’ must be > 1
+Margin = Rate limit / Volume per run → must be > 1
 ```
 
 Example:
 ```
-10,000 stocks Ă— 1 call/stock Ă— 1 run/day = 10,000 calls/day
-Free tier: 500 calls/day â†’ NOT ENOUGH â†’ need bulk endpoint or paid tier
+10,000 stocks × 1 call/stock × 1 run/day = 10,000 calls/day
+Free tier: 500 calls/day → NOT ENOUGH → need bulk endpoint or paid tier
 ```
 
-### Step 4 â€” Determine query schedule
+### Step 4 — Determine query schedule
 
 Each source needs: **when to query, at what frequency?**
 
@@ -63,14 +63,14 @@ Each source needs: **when to query, at what frequency?**
 | Intraday batch | Data updates within the day (news sentiment, real-time prices) |
 | On-demand | Static data (reference tables) |
 
-### Step 5 â€” Verify join keys
+### Step 5 — Verify join keys
 
 If multiple sources need to be joined, verify clearly:
 - What is the common key? (ticker symbol, product ID, user ID, timestamp grain)
 - Do the keys actually match? (case sensitivity, format differences?)
-- If there's no natural key â†’ a mapping table is needed â†’ document in the contract.
+- If there's no natural key → a mapping table is needed → document in the contract.
 
-### Step 6 â€” Assess breaking-change risk
+### Step 6 — Assess breaking-change risk
 
 | Risk | Signs |
 |------|-------|
@@ -120,7 +120,7 @@ volume:
   margin: <X>x   # limit / callsPerRun, must be > 1
 
 schema:
-  # Schema from LIVE CALL â€” not from docs
+  # Schema from LIVE CALL — not from docs
   type: object
   sampleResponse: |
     <paste actual response>
@@ -156,7 +156,7 @@ sla:
 
 For each source, `contracts/source-<name>.yaml` has:
 - [ ] Schema from live call (not from docs)
-- [ ] Rate limit math calculated â€” `fitsWithinLimit: true`
+- [ ] Rate limit math calculated — `fitsWithinLimit: true`
 - [ ] `schedule.frequency` and `cronExpression` clearly defined
 - [ ] `joinKey` verified against other sources (or "n/a" with reason)
 - [ ] `breakingChangeRisk` with reasoning
@@ -164,9 +164,9 @@ For each source, `contracts/source-<name>.yaml` has:
 
 ## Next Step
 
-Previous: `/problem`. After all contracts are done â†’ run `/arch` to design your pipeline architecture and choose your tool stack.
+Previous: `/problem`. After all contracts are done → run `/arch` to design your pipeline architecture and choose your tool stack.
 
-If a source cannot provide a required field for an analytical question, go back to `docs/business_problem.md` and drop or revise that question â€” **do not force-fix it at ingestion time**.
+If a source cannot provide a required field for an analytical question, go back to `docs/business_problem.md` and drop or revise that question — **do not force-fix it at ingestion time**.
 
 ## References
 

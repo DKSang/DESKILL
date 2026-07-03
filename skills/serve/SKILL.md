@@ -211,5 +211,6 @@ If a question cannot be answered cleanly from the Gold table, revisit `/transfor
 ## References
 
 - Phase deep-dive: `phases/phase-7-serving.md`
-- API design patterns: `agents/backend-architect.md`
-- Architecture guide: `commands/data-pipeline.md`
+- Serving patterns: `skills/serve/references/serving_patterns.md`
+- Serving/API persona: `agents/backend-architect.md`
+- Pipeline architecture command: `commands/data-pipeline.md`

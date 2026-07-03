@@ -15,26 +15,26 @@ Done when every Gold table answers at least one analytical question from `docs/b
 
 ## Steps
 
-### Step 1 â€” Silver layer: clean Bronze
+### Step 1 — Silver layer: clean Bronze
 
 For each source, create a Silver model that does **4 things and only 4 things**:
 
 | Task | Code pattern |
 |------|-------------|
-| **Standardize types** | Cast string dates â†’ timestamp, string numbers â†’ float |
+| **Standardize types** | Cast string dates → timestamp, string numbers → float |
 | **Deduplicate** | By natural key (not ingestion order) |
-| **Handle nulls explicitly** | Default value / drop / flag â€” document the decision |
+| **Handle nulls explicitly** | Default value / drop / flag — document the decision |
 | **Join sources** | Only join if both sources are clean, using keys verified in the contract |
 
 **Do NOT do in Silver**: business aggregations, derived metrics, business-rule filters.
 
-### Step 2 â€” Gold layer: aggregations at the right grain
+### Step 2 — Gold layer: aggregations at the right grain
 
 For each analytical question, create a Gold model at the grain defined in `docs/dw_schema.md`:
 
 ```sql
 -- Gold: fct_candles_daily
--- Grain: 1 stock Ă— 1 trading day
+-- Grain: 1 stock × 1 trading day
 -- Answers: "daily OHLC and volume per stock"
 SELECT
     {{ dbt_utils.generate_surrogate_key(['company_id', 'trade_date']) }} AS candle_id,
@@ -49,15 +49,15 @@ FROM {{ ref('stg_<source>') }}
 WHERE close IS NOT NULL
 ```
 
-### Step 3 â€” Incremental strategy
+### Step 3 — Incremental strategy
 
 Choose the right strategy based on volume and update pattern:
 
 | Strategy | When to use |
 |----------|-------------|
 | **Full refresh** | Small data (<1M rows), simpler. Use in dev. |
-| **Incremental (append)** | Immutable events â€” only append new records |
-| **Incremental (merge/upsert)** | Records may update â€” use a watermark column |
+| **Incremental (append)** | Immutable events — only append new records |
+| **Incremental (merge/upsert)** | Records may update — use a watermark column |
 | **Incremental (delete+insert)** | Old records in a partition must be replaced |
 
 ## Output
@@ -169,7 +169,7 @@ df.write.mode("overwrite").partitionBy("<date_col>") \
 
 ## Next Step
 
-Previous: `/ingest`. After done â†’ run `/test` to write a test suite for your transformation logic.
+Previous: `/ingest`. After done → run `/test` to write a test suite for your transformation logic.
 
 ## References
 

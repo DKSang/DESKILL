@@ -15,13 +15,13 @@ Only move to `/schema` when `docs/architecture.md` has: 1 pattern, 1 tool/catego
 
 ## Steps
 
-### Step 1 â€” Choose a layering pattern
+### Step 1 — Choose a layering pattern
 
 Pick **1 pattern** based on requirements from `docs/business_problem.md`:
 
 | Pattern | Choose when |
 |---------|-------------|
-| **Medallion (Bronze/Silver/Gold)** | Default â€” clean separation of raw/cleaned/business-ready |
+| **Medallion (Bronze/Silver/Gold)** | Default — clean separation of raw/cleaned/business-ready |
 | **ELT** | Modern cloud DW, want to keep raw data, transform in-warehouse |
 | **ETL** | Legacy system, need heavy pre-processing before loading |
 | **Kappa** | Stream-only, no batch needed |
@@ -29,7 +29,7 @@ Pick **1 pattern** based on requirements from `docs/business_problem.md`:
 
 > For portfolio projects: **Medallion is the default**. Only choose otherwise if there's a specific reason from the business problem.
 
-### Step 2 â€” Pick 1 tool per category
+### Step 2 — Pick 1 tool per category
 
 For each category, choose **exactly 1 tool** and document the reason:
 
@@ -41,20 +41,20 @@ For each category, choose **exactly 1 tool** and document the reason:
 | **Query engine / DW** | DuckDB / Snowflake / BigQuery | DuckDB: local/free, excellent analytics. Cloud DW if scale or portfolio target requires it |
 | **Containerization** | Docker Compose | Always use Docker Compose for local reproducibility |
 
-**Rule**: If unsure â†’ pick the most popular option on the job market for your domain. Don't over-optimize early.
+**Rule**: If unsure → pick the most popular option on the job market for your domain. Don't over-optimize early.
 
-### Step 3 â€” Draw a data flow diagram
+### Step 3 — Draw a data flow diagram
 
 Draw using Mermaid (or ASCII) showing the full path:
 
 ```
-[Source A] â†’ [Ingestion] â†’ [Bronze/Raw] â†’ [Transform] â†’ [Silver] â†’ [Gold] â†’ [Serving]
-[Source B] â†—                  (storage)      (tool)      (storage)  (storage)  (dashboard/API)
+[Source A] → [Ingestion] → [Bronze/Raw] → [Transform] → [Silver] → [Gold] → [Serving]
+[Source B] ↗                  (storage)      (tool)      (storage)  (storage)  (dashboard/API)
 ```
 
 Every arrow/box must have a **specific tool name**, never leave it blank.
 
-### Step 4 â€” Define naming conventions
+### Step 4 — Define naming conventions
 
 Commit to these early, don't defer them. Example:
 
@@ -65,23 +65,23 @@ Gold:    mart.fct_<entity>_<grain>  (or /data/gold/<entity>/)
          mart.dim_<entity>
 ```
 
-### Step 5 â€” Document scale assumptions
+### Step 5 — Document scale assumptions
 
-Document current scale â€” this justifies every tool choice:
+Document current scale — this justifies every tool choice:
 
-> "Pipeline processes ~[X] MB/day on a single machine â€” sufficient justification for DuckDB/pandas over Spark."
+> "Pipeline processes ~[X] MB/day on a single machine — sufficient justification for DuckDB/pandas over Spark."
 
-If scale changes later â†’ revisit this step, don't swap tools without acknowledging the shift.
+If scale changes later → revisit this step, don't swap tools without acknowledging the shift.
 
 ## Output
 
 Create `docs/architecture.md`:
 
 ```markdown
-# Architecture â€” [Project Name]
+# Architecture — [Project Name]
 
 ## Pattern
-[Medallion / ELT / ETL / Kappa / Lakehouse] â€” reason for choosing this pattern
+[Medallion / ELT / ETL / Kappa / Lakehouse] — reason for choosing this pattern
 
 ## Scale Assumption
 [X MB/GB per day, single machine / distributed, X sources]
@@ -119,7 +119,7 @@ graph LR
 ## Layer Contracts
 | Layer | Allowed transformations | Output guarantees |
 |-------|------------------------|-------------------|
-| Bronze | None â€” raw as-is | Original structure + metadata tags |
+| Bronze | None — raw as-is | Original structure + metadata tags |
 | Silver | Clean, dedupe, type cast | No duplicates, no nulls on PK |
 | Gold | Aggregation, business logic | Answers analytical questions at correct grain |
 
@@ -137,11 +137,11 @@ graph LR
 
 ## Next Step
 
-Previous: `/sources`. After done â†’ run `/schema` to design your DW schema (Fact/Dimension tables).
+Previous: `/sources`. After done → run `/schema` to design your DW schema (Fact/Dimension tables).
 
 ## References
 
-- Template: `skills/arch/references/patterns.md` â€” detailed ETL/ELT/Lambda/Kappa/Lakehouse tradeoffs
+- Template: `skills/arch/references/patterns.md` — detailed ETL/ELT/Lambda/Kappa/Lakehouse tradeoffs
 - Phase deep-dive: `phases/phase-2-architecture.md`
 - Previous skill: `skills/sources/SKILL.md`
 - Next skill: `skills/schema/SKILL.md`

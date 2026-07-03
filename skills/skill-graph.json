@@ -1,0 +1,143 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "name": "deskill-de",
+  "version": "3.1.0",
+  "description": "Machine-readable graph of the 14 DESKILL skills. Each skill owns one deliverable and suggests the next. Used by tools/validate.py and downstream tooling.",
+  "nodes": [
+    {
+      "id": "problem", "order": 1, "trigger": "/problem",
+      "deliverable": "docs/business_problem.md",
+      "phase": "phase-0-discover", "stage": "discover",
+      "skillFile": "skills/problem/SKILL.md",
+      "assets": ["skills/problem/assets/business_problem_template.md"],
+      "prev": null, "next": "sources",
+      "feedbackTo": []
+    },
+    {
+      "id": "sources", "order": 2, "trigger": "/sources",
+      "deliverable": "contracts/source-*.yaml",
+      "phase": "phase-1-data-contracts", "stage": "discover",
+      "skillFile": "skills/sources/SKILL.md",
+      "assets": ["skills/sources/assets/source_contract_template.yaml"],
+      "scripts": ["skills/sources/scripts/probe_source.py"],
+      "prev": "problem", "next": "arch",
+      "feedbackTo": ["problem"]
+    },
+    {
+      "id": "arch", "order": 3, "trigger": "/arch",
+      "deliverable": "docs/architecture.md",
+      "phase": "phase-2-architecture", "stage": "design",
+      "skillFile": "skills/arch/SKILL.md",
+      "references": ["skills/arch/references/patterns.md"],
+      "prev": "sources", "next": "schema",
+      "feedbackTo": []
+    },
+    {
+      "id": "schema", "order": 4, "trigger": "/schema",
+      "deliverable": "docs/dw_schema.md",
+      "phase": "phase-2-architecture", "stage": "design",
+      "skillFile": "skills/schema/SKILL.md",
+      "assets": ["skills/schema/assets/dw_schema_template.md"],
+      "prev": "arch", "next": "env",
+      "feedbackTo": []
+    },
+    {
+      "id": "env", "order": 5, "trigger": "/env",
+      "deliverable": "docker-compose.yml + .env.template + requirements.txt",
+      "phase": "phase-3-environment-setup", "stage": "design",
+      "skillFile": "skills/env/SKILL.md",
+      "assets": ["skills/env/assets/docker-compose-base.yml"],
+      "prev": "schema", "next": "ingest",
+      "feedbackTo": []
+    },
+    {
+      "id": "ingest", "order": 6, "trigger": "/ingest",
+      "deliverable": "ingestion/<source>/ingest.py",
+      "phase": "phase-4-ingestion", "stage": "build",
+      "skillFile": "skills/ingest/SKILL.md",
+      "scripts": ["skills/ingest/scripts/ingestion_template.py"],
+      "references": ["skills/ingest/references/ingestion_patterns.md"],
+      "prev": "env", "next": "transform",
+      "feedbackTo": ["sources"]
+    },
+    {
+      "id": "transform", "order": 7, "trigger": "/transform",
+      "deliverable": "Silver + Gold models",
+      "phase": "phase-5-transformation-testing", "stage": "build",
+      "skillFile": "skills/transform/SKILL.md",
+      "references": ["skills/transform/references/transformation_patterns.md"],
+      "prev": "ingest", "next": "test",
+      "feedbackTo": ["schema"]
+    },
+    {
+      "id": "test", "order": 8, "trigger": "/test",
+      "deliverable": "tests/ (schema + logic, all passing)",
+      "phase": "phase-5-transformation-testing", "stage": "build",
+      "skillFile": "skills/test/SKILL.md",
+      "assets": ["skills/test/assets/test_templates.md"],
+      "prev": "transform", "next": "dq",
+      "feedbackTo": []
+    },
+    {
+      "id": "dq", "order": 9, "trigger": "/dq",
+      "deliverable": "quality/dq_checks.py + docs/dq_report.md",
+      "phase": "phase-6-data-quality", "stage": "quality",
+      "skillFile": "skills/dq/SKILL.md",
+      "assets": ["skills/dq/assets/dq_checks_template.md"],
+      "prev": "test", "next": "contract-check",
+      "feedbackTo": []
+    },
+    {
+      "id": "contract-check", "order": 10, "trigger": "/contract-check",
+      "deliverable": "quality/contract_check.py + docs/contract_check_report.json",
+      "phase": "phase-6-data-quality", "stage": "quality",
+      "skillFile": "skills/contract-check/SKILL.md",
+      "scripts": ["skills/contract-check/scripts/validate_contract.py"],
+      "prev": "dq", "next": "dag",
+      "feedbackTo": ["sources"]
+    },
+    {
+      "id": "dag", "order": 11, "trigger": "/dag",
+      "deliverable": "dags/<project>_pipeline.py",
+      "phase": "phase-8-orchestration", "stage": "ship",
+      "skillFile": "skills/dag/SKILL.md",
+      "references": ["skills/dag/references/dag_patterns.md"],
+      "prev": "contract-check", "next": "serve",
+      "feedbackTo": ["sources", "arch"]
+    },
+    {
+      "id": "serve", "order": 12, "trigger": "/serve",
+      "deliverable": "serving/app.py",
+      "phase": "phase-7-serving", "stage": "ship",
+      "skillFile": "skills/serve/SKILL.md",
+      "references": ["skills/serve/references/serving_patterns.md"],
+      "prev": "dag", "next": "ci",
+      "feedbackTo": ["transform", "schema"]
+    },
+    {
+      "id": "ci", "order": 13, "trigger": "/ci",
+      "deliverable": ".github/workflows/ci.yml",
+      "phase": "phase-9-governance", "stage": "ship",
+      "skillFile": "skills/ci/SKILL.md",
+      "assets": ["skills/ci/assets/github_actions_template.yml"],
+      "prev": "serve", "next": "docs",
+      "feedbackTo": []
+    },
+    {
+      "id": "docs", "order": 14, "trigger": "/docs",
+      "deliverable": "README.md + data lineage + cost analysis",
+      "phase": "phase-9-governance", "stage": "ship",
+      "skillFile": "skills/docs/SKILL.md",
+      "assets": ["skills/docs/assets/readme_template.md"],
+      "prev": "ci", "next": null,
+      "feedbackTo": ["arch"]
+    }
+  ],
+  "stages": ["discover", "design", "build", "quality", "ship"],
+  "phases": [
+    "phase-0-discover", "phase-1-data-contracts", "phase-2-architecture",
+    "phase-3-environment-setup", "phase-4-ingestion",
+    "phase-5-transformation-testing", "phase-6-data-quality",
+    "phase-7-serving", "phase-8-orchestration", "phase-9-governance"
+  ]
+}
